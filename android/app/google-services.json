@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "582817729094",
+    "firebase_url": "https://dental-clinic-9cbf2-default-rtdb.firebaseio.com",
+    "project_id": "dental-clinic-9cbf2",
+    "storage_bucket": "dental-clinic-9cbf2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:582817729094:android:3260d052376f9edba05847",
+        "android_client_info": {
+          "package_name": "com.example.dental_clinic_mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD774wFTpieob0opuKh0MpB28G2XJGPXsA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
