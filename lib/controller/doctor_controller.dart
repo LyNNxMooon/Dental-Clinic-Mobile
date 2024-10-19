@@ -9,6 +9,18 @@ class DoctorController extends BaseController {
 
   final _firebaseService = FirebaseServices();
 
+  RxList<DoctorVO> searchList = <DoctorVO>[].obs;
+  RxList<DoctorVO> searchedDoctors = <DoctorVO>[].obs;
+
+  callSearch(Function def) {
+    _firebaseService.getSearchDoctorsStream().then((value) {
+      searchList.value = value;
+    });
+
+    def;
+    update();
+  }
+
   @override
   void onInit() {
     callDoctors();

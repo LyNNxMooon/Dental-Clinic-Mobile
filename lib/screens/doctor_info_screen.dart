@@ -1,9 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dental_clinic_mobile/constants/colors.dart';
 import 'package:dental_clinic_mobile/constants/text.dart';
 import 'package:dental_clinic_mobile/controller/doctor_controller.dart';
 import 'package:dental_clinic_mobile/data/doctor_vo.dart';
+import 'package:dental_clinic_mobile/screens/doctor_detail_screen.dart';
+import 'package:dental_clinic_mobile/screens/search_doctor_screen.dart';
 import 'package:dental_clinic_mobile/widgets/load_fail_widget.dart';
 import 'package:dental_clinic_mobile/widgets/loading_state_widget.dart';
+import 'package:dental_clinic_mobile/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -24,25 +28,28 @@ class DoctorInfoScreen extends StatelessWidget {
           ),
         ),
         const Gap(30),
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 8),
-          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-          height: 50,
-          decoration: BoxDecoration(
-              border: Border.all(color: kThirdColor, width: 1),
-              borderRadius: BorderRadius.circular(10)),
-          child: const Row(
-            children: [
-              Icon(
-                Icons.search,
-                color: kSecondaryColor,
-              ),
-              Gap(20),
-              Text(
-                "Search Doctor...",
-                style: TextStyle(fontSize: 16),
-              )
-            ],
+        GestureDetector(
+          onTap: () => Get.to(() => const SearchPage()),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+            height: 50,
+            decoration: BoxDecoration(
+                border: Border.all(color: kThirdColor, width: 1),
+                borderRadius: BorderRadius.circular(10)),
+            child: const Row(
+              children: [
+                Icon(
+                  Icons.search,
+                  color: kSecondaryColor,
+                ),
+                Gap(20),
+                Text(
+                  "Search Doctor...",
+                  style: TextStyle(fontSize: 16),
+                )
+              ],
+            ),
           ),
         ),
         const Gap(20),
@@ -87,7 +94,9 @@ class DoctorList extends StatelessWidget {
       ),
       itemCount: _doctorController.doctorsList.length,
       itemBuilder: (context, index) => GestureDetector(
-        onTap: () {},
+        onTap: () {
+          Get.to(() => DoctorDetailScreen(doctor: doctors[index]));
+        },
         child: DoctorCard(
           doctor: doctors[index],
         ),
@@ -123,9 +132,13 @@ class DoctorCard extends StatelessWidget {
                   border: Border.all(width: 0.3)),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(45),
-                child: Image.network(
-                  doctor.url,
+                child: CachedNetworkImage(
+                  imageUrl: doctor.url,
                   fit: BoxFit.cover,
+                  placeholder: (context, url) => const LoadingWidget(),
+                  errorWidget: (context, url, error) => const Center(
+                    child: Icon(Icons.error),
+                  ),
                 ),
               ),
             ),

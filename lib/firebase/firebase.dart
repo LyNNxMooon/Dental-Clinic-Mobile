@@ -78,6 +78,22 @@ class FirebaseServices {
     });
   }
 
+  Future<List<DoctorVO>> getSearchDoctorsStream() async {
+    final databaseReference = FirebaseDatabase.instance.ref('doctors');
+    final snapshot = await databaseReference.orderByChild('name').get();
+
+    if (snapshot.exists) {
+      final doctorList = snapshot.children.map((doctor) {
+        return DoctorVO.fromJson(
+            Map<String, dynamic>.from(doctor.value as Map));
+      }).toList();
+
+      return doctorList;
+    } else {
+      return [];
+    }
+  }
+
   //firebase storage
 
   static final _firebaseStorage = FirebaseStorage.instance;

@@ -1,3 +1,4 @@
+import 'package:dental_clinic_mobile/constants/colors.dart';
 import 'package:dental_clinic_mobile/screens/login_screen.dart';
 import 'package:dental_clinic_mobile/screens/navigation_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,7 +16,10 @@ class AuthPage extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             //Navigator.pop(context);
-            Fluttertoast.showToast(msg: "Authentication Success!");
+            Fluttertoast.showToast(
+                msg: "Authentication Success!",
+                backgroundColor: kPrimaryColor,
+                textColor: kSecondaryColor);
             return const NavigationScreen();
           } else {
             return const LoginScreen();

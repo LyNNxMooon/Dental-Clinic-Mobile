@@ -1,9 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dental_clinic_mobile/constants/colors.dart';
 import 'package:dental_clinic_mobile/constants/text.dart';
 import 'package:dental_clinic_mobile/controller/emergency_saving_controller.dart';
 import 'package:dental_clinic_mobile/data/emergency_saving_vo.dart';
 import 'package:dental_clinic_mobile/widgets/load_fail_widget.dart';
 import 'package:dental_clinic_mobile/widgets/loading_state_widget.dart';
+import 'package:dental_clinic_mobile/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -101,9 +103,13 @@ class SavingCard extends StatelessWidget {
                   border: Border.all(width: 0.3)),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(45),
-                child: Image.network(
-                  saving.url,
+                child: CachedNetworkImage(
+                  imageUrl: saving.url,
                   fit: BoxFit.cover,
+                  placeholder: (context, url) => const LoadingWidget(),
+                  errorWidget: (context, url, error) => const Center(
+                    child: Icon(Icons.error),
+                  ),
                 ),
               ),
             ),
