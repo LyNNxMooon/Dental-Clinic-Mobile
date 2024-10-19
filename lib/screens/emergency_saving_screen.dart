@@ -3,6 +3,7 @@ import 'package:dental_clinic_mobile/constants/colors.dart';
 import 'package:dental_clinic_mobile/constants/text.dart';
 import 'package:dental_clinic_mobile/controller/emergency_saving_controller.dart';
 import 'package:dental_clinic_mobile/data/emergency_saving_vo.dart';
+import 'package:dental_clinic_mobile/screens/emergency_detail_screen.dart';
 import 'package:dental_clinic_mobile/widgets/load_fail_widget.dart';
 import 'package:dental_clinic_mobile/widgets/loading_state_widget.dart';
 import 'package:dental_clinic_mobile/widgets/loading_widget.dart';
@@ -67,7 +68,9 @@ class EmergencySavingList extends StatelessWidget {
       ),
       itemCount: _emergencySavingController.emergencySavingList.length,
       itemBuilder: (context, index) => GestureDetector(
-        onTap: () {},
+        onTap: () {
+          Get.to(() => EmergencyDetailScreen(saving: savings[index]));
+        },
         child: SavingCard(
           saving: savings[index],
         ),

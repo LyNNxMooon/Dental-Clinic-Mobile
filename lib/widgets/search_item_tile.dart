@@ -1,6 +1,8 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dental_clinic_mobile/constants/colors.dart';
+import 'package:dental_clinic_mobile/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 
 class SearchItemTile extends StatelessWidget {
@@ -44,7 +46,14 @@ class SearchItemTile extends StatelessWidget {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(30),
-                  child: Image.network(url, fit: BoxFit.cover),
+                  child: CachedNetworkImage(
+                    imageUrl: url,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => const LoadingWidget(),
+                    errorWidget: (context, url, error) => const Center(
+                      child: Icon(Icons.error),
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(
