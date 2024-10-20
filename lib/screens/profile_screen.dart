@@ -5,8 +5,10 @@ import 'package:dental_clinic_mobile/controller/auth_controller.dart';
 import 'package:dental_clinic_mobile/data/user_vo.dart';
 import 'package:dental_clinic_mobile/screens/change_password_page.dart';
 import 'package:dental_clinic_mobile/screens/profile_update_screen.dart';
+import 'package:dental_clinic_mobile/widgets/banned_user_info.dart';
 import 'package:dental_clinic_mobile/widgets/button_widget.dart';
 import 'package:dental_clinic_mobile/widgets/confirmation_widget.dart';
+import 'package:dental_clinic_mobile/widgets/error_widget.dart';
 import 'package:dental_clinic_mobile/widgets/load_fail_widget.dart';
 import 'package:dental_clinic_mobile/widgets/loading_state_widget.dart';
 import 'package:dental_clinic_mobile/widgets/password_permission_widget.dart';
@@ -38,7 +40,7 @@ class ProfileScreen extends StatelessWidget {
               loadingSuccessWidget: (_authController
                           .currentUser.value?.isBanned ??
                       false)
-                  ? bannedUserInfo(context)
+                  ? const BannedUserInfoWidget()
                   : profileWidget(context, _authController.currentUser.value),
               loadingInitWidget: Padding(
                 padding: EdgeInsets.only(
@@ -50,24 +52,6 @@ class ProfileScreen extends StatelessWidget {
                 ),
               )),
         )
-      ],
-    );
-  }
-
-  Widget bannedUserInfo(BuildContext context) {
-    return Column(
-      children: [
-        Gap(MediaQuery.of(context).size.height * 0.35),
-        const Center(
-          child: Text(
-            textAlign: TextAlign.center,
-            "You have been banned by admin. Please contact to us",
-            style: TextStyle(color: kErrorColor, fontWeight: FontWeight.bold),
-          ),
-        ),
-        const Gap(30),
-        CustomButton(
-            name: "Logout", function: () => FirebaseAuth.instance.signOut()),
       ],
     );
   }
@@ -129,19 +113,29 @@ class ProfileScreen extends StatelessWidget {
         CustomButton(
             name: "Delete Account",
             function: () {
-              showDialog(
-                context: context,
-                builder: (context) => PasswordPermissionWidget(
-                    function: () => showDialog(
-                          context: context,
-                          builder: (context) => ConfirmationWidget(
-                              message:
-                                  "Are you sure to delete your account? Action cannot be undone!",
-                              function: () {
-                                _authController.deleteUserAccount(context);
-                              }),
-                        )),
-              );
+              if (_authController.currentUser.value == null) {
+                showDialog(
+                  context: context,
+                  builder: (context) => CustomErrorWidget(
+                    errorMessage: "Admin does not have access to this feature.",
+                    function: () => Get.back(),
+                  ),
+                );
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (context) => PasswordPermissionWidget(
+                      function: () => showDialog(
+                            context: context,
+                            builder: (context) => ConfirmationWidget(
+                                message:
+                                    "Are you sure to delete your account? Action cannot be undone!",
+                                function: () {
+                                  _authController.deleteUserAccount(context);
+                                }),
+                          )),
+                );
+              }
             }),
         const Gap(15),
         CustomButton(
