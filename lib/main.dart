@@ -1,6 +1,6 @@
 import 'package:dental_clinic_mobile/firebase_options.dart';
 import 'package:dental_clinic_mobile/persistent/hive_constant.dart';
-import 'package:dental_clinic_mobile/screens/auth_page.dart';
+import 'package:dental_clinic_mobile/screens/splash_screen.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: "Ubuntu"),
-      home: const AuthPage(),
+      home: const SplashPage(),
     );
   }
 }
