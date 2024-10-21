@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:dental_clinic_mobile/data/appointment_vo.dart';
 import 'package:dental_clinic_mobile/data/doctor_vo.dart';
 import 'package:dental_clinic_mobile/data/emergency_saving_vo.dart';
+import 'package:dental_clinic_mobile/data/feedback_vo.dart';
 import 'package:dental_clinic_mobile/data/user_vo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -20,6 +21,15 @@ class FirebaseServices {
     try {
       await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
+    } on FirebaseAuthException catch (error) {
+      return Future.error(error);
+    }
+  }
+
+  Future firebaseSignUp(String email, String password) async {
+    try {
+      await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
     } on FirebaseAuthException catch (error) {
       return Future.error(error);
     }
@@ -101,8 +111,6 @@ class FirebaseServices {
           .map<AppointmentVO?>((snapshot) {
             final appointment = AppointmentVO.fromJson(
                 Map<String, dynamic>.from(snapshot.value as Map));
-
-            // Return only if the appointment's patient_id matches the current patient UID
             if (appointment.patientId == patientUid) {
               return appointment;
             } else {
@@ -110,7 +118,7 @@ class FirebaseServices {
             }
           })
           .whereType<AppointmentVO>()
-          .toList(); // Filter out null values
+          .toList();
     });
   }
 
@@ -120,6 +128,36 @@ class FirebaseServices {
           .child("appointments")
           .child(appointmentVo.id.toString())
           .set(appointmentVo.toJson());
+    } on FirebaseException catch (error) {
+      print(error);
+      return Future.error(error);
+    }
+  }
+
+  Stream<List<FeedBackVO>?> getFeedBackListStream() {
+    return databaseRef.child("patient_feedbacks").onValue.map((event) {
+      return event.snapshot.children
+          .map<FeedBackVO?>((snapshot) {
+            final feedback = FeedBackVO.fromJson(
+                Map<String, dynamic>.from(snapshot.value as Map));
+
+            if (feedback.display) {
+              return feedback;
+            } else {
+              return null;
+            }
+          })
+          .whereType<FeedBackVO>()
+          .toList();
+    });
+  }
+
+  Future saveFeedback(FeedBackVO feedbackVo) async {
+    try {
+      return databaseRef
+          .child("patient_feedbacks")
+          .child(feedbackVo.id.toString())
+          .set(feedbackVo.toJson());
     } on FirebaseException catch (error) {
       print(error);
       return Future.error(error);

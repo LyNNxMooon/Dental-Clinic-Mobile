@@ -1,6 +1,7 @@
 import 'package:dental_clinic_mobile/constants/colors.dart';
 import 'package:dental_clinic_mobile/constants/text.dart';
 import 'package:dental_clinic_mobile/controller/auth_controller.dart';
+
 import 'package:dental_clinic_mobile/widgets/button_widget.dart';
 import 'package:dental_clinic_mobile/widgets/textfield.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,9 @@ import 'package:get/get.dart';
 import '../widgets/loading_state_widget.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({super.key, required this.function});
+
+  final VoidCallback function;
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -114,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             const Gap(60),
             GestureDetector(
-              onTap: () {},
+              onTap: widget.function,
               child: const Column(
                 children: [
                   Icon(

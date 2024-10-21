@@ -4,6 +4,7 @@ import 'package:dental_clinic_mobile/controller/appointment_controller.dart';
 import 'package:dental_clinic_mobile/controller/auth_controller.dart';
 import 'package:dental_clinic_mobile/data/appointment_vo.dart';
 import 'package:dental_clinic_mobile/screens/add_appointment_screen.dart';
+import 'package:dental_clinic_mobile/widgets/admin_access_info_widget.dart';
 import 'package:dental_clinic_mobile/widgets/banned_user_info.dart';
 import 'package:dental_clinic_mobile/widgets/load_fail_widget.dart';
 import 'package:dental_clinic_mobile/widgets/loading_state_widget.dart';
@@ -28,21 +29,11 @@ class AppointmentScreen extends StatelessWidget {
           ),
         ),
         Obx(() => _authController.currentUser.value == null
-            ? Padding(
-                padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.35),
-                child: const Center(
-                  child: Text(
-                    textAlign: TextAlign.center,
-                    "Admin does not have access to this feature.",
-                    style: TextStyle(
-                        color: kErrorColor, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              )
+            ? const AdminAccessInfoWidget()
             : (_authController.currentUser.value?.isBanned ?? false)
                 ? const BannedUserInfoWidget()
-                : appointmentWidget(context))
+                : appointmentWidget(context)),
+        const Gap(50)
       ],
     );
   }
@@ -76,14 +67,14 @@ class AppointmentScreen extends StatelessWidget {
         ),
         const Gap(20),
         LoadingStateWidget(
-            paddingTop: 100,
+            paddingTop: MediaQuery.of(context).size.height * 0.25,
             loadingState: _appointmentController.getLoadingState,
             loadingSuccessWidget: AppointmentList(
               appointments: _appointmentController.appointmentList,
             ),
             loadingInitWidget: Padding(
               padding: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.height * 0.1),
+                  top: MediaQuery.of(context).size.height * 0.25),
               child: LoadFailWidget(
                 function: () {
                   _appointmentController.callAppointments();

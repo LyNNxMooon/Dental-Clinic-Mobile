@@ -1,5 +1,6 @@
 import 'package:dental_clinic_mobile/constants/colors.dart';
-import 'package:dental_clinic_mobile/screens/login_screen.dart';
+import 'package:dental_clinic_mobile/screens/login_register_toggle_screen.dart';
+
 import 'package:dental_clinic_mobile/screens/navigation_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,7 @@ class AuthPage extends StatelessWidget {
                 textColor: kSecondaryColor);
             return const NavigationScreen();
           } else {
-            return const LoginScreen();
+            return const LoginOrRegister();
           }
         },
       ),
