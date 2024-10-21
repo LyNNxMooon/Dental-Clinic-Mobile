@@ -59,7 +59,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
           setState(() {
             index = selectedIndex;
 
-            if (selectedIndex == 4) {
+            if (selectedIndex == 4 || selectedIndex == 1) {
               _authController.getUser();
             }
           });

@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:dental_clinic_mobile/data/appointment_vo.dart';
 import 'package:dental_clinic_mobile/data/doctor_vo.dart';
 import 'package:dental_clinic_mobile/data/emergency_saving_vo.dart';
 import 'package:dental_clinic_mobile/data/user_vo.dart';
@@ -91,6 +92,37 @@ class FirebaseServices {
       return doctorList;
     } else {
       return [];
+    }
+  }
+
+  Stream<List<AppointmentVO>?> getAppointmentListStream(String patientUid) {
+    return databaseRef.child("appointments").onValue.map((event) {
+      return event.snapshot.children
+          .map<AppointmentVO?>((snapshot) {
+            final appointment = AppointmentVO.fromJson(
+                Map<String, dynamic>.from(snapshot.value as Map));
+
+            // Return only if the appointment's patient_id matches the current patient UID
+            if (appointment.patientId == patientUid) {
+              return appointment;
+            } else {
+              return null;
+            }
+          })
+          .whereType<AppointmentVO>()
+          .toList(); // Filter out null values
+    });
+  }
+
+  Future saveAppointment(AppointmentVO appointmentVo) async {
+    try {
+      return databaseRef
+          .child("appointments")
+          .child(appointmentVo.id.toString())
+          .set(appointmentVo.toJson());
+    } on FirebaseException catch (error) {
+      print(error);
+      return Future.error(error);
     }
   }
 
