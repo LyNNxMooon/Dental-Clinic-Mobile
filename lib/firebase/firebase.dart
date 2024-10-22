@@ -2,10 +2,13 @@
 
 import 'dart:io';
 
+import 'package:dental_clinic_mobile/data/admin_vo.dart';
 import 'package:dental_clinic_mobile/data/appointment_vo.dart';
+import 'package:dental_clinic_mobile/data/chatted_user_vo.dart';
 import 'package:dental_clinic_mobile/data/doctor_vo.dart';
 import 'package:dental_clinic_mobile/data/emergency_saving_vo.dart';
 import 'package:dental_clinic_mobile/data/feedback_vo.dart';
+import 'package:dental_clinic_mobile/data/message_vo.dart';
 import 'package:dental_clinic_mobile/data/user_vo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -47,6 +50,15 @@ class FirebaseServices {
         final rawData = event.snapshot.value;
         return UserVO.fromJson(Map<String, dynamic>.from(rawData as Map));
       }
+    });
+  }
+
+  Stream<List<AdminVO>?> getAdminUID() {
+    return databaseRef.child("admin_uid").onValue.map((event) {
+      return event.snapshot.children.map<AdminVO>((snapshot) {
+        return AdminVO.fromJson(
+            Map<String, dynamic>.from(snapshot.value as Map));
+      }).toList();
     });
   }
 
@@ -179,6 +191,85 @@ class FirebaseServices {
       return takeSnapShot.ref.getDownloadURL().then((value) {
         return value;
       });
+    });
+  }
+
+  //chat Services
+
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseDatabase _firebaseDatabase = FirebaseDatabase.instance;
+  Future<void> sendMessages(String receiverID, String message,
+      String senderName, String senderProfile) async {
+    final String currentUserID = _firebaseAuth.currentUser!.uid;
+    final String currentUserEmail = _firebaseAuth.currentUser!.email.toString();
+    final DateTime timeStamp = DateTime.now();
+
+    MessageVO newMessage = MessageVO(
+        senderID: currentUserID,
+        senderEmail: currentUserEmail,
+        receiverID: receiverID,
+        message: message,
+        timeStamp: timeStamp);
+
+    //Chat Room
+    List<String> ids = [currentUserID, receiverID];
+    ids.sort();
+    String chatRoomID = ids.join("_");
+
+    // Add Message and receiver to Chat Room
+    await _firebaseDatabase
+        .ref('chat_rooms/$chatRoomID/messages')
+        .push()
+        .set(newMessage.toJson());
+
+    await _firebaseDatabase.ref('users/$currentUserID/chats/$receiverID').set({
+      'name': "Admin",
+      'chatted_user_uid': receiverID,
+      'last_sender_uid': currentUserID,
+      'profile_url':
+          "https://www.shutterstock.com/image-vector/user-icon-vector-600nw-393536320.jpg",
+      'last_message': message,
+      'date_time': timeStamp.toIso8601String(),
+    });
+
+    await _firebaseDatabase.ref('users/$receiverID/chats/$currentUserID').set({
+      'name': senderName,
+      'chatted_user_uid': currentUserID,
+      'last_sender_uid': currentUserID,
+      'profile_url': senderProfile,
+      'last_message': message,
+      'date_time': timeStamp.toIso8601String(),
+    });
+  }
+
+  Stream<DatabaseEvent> getMessages(String userID, String otherUserID) {
+    List<String> ids = [userID, otherUserID];
+    ids.sort();
+    String chatRoomID = ids.join("_");
+
+    // Return a stream from Realtime Database reference for the messages
+    return _firebaseDatabase
+        .ref('chat_rooms/$chatRoomID/messages')
+        .orderByChild('time_stamp') // Ordering by timestamp
+        .onValue; // This listens to any changes in the data
+  }
+
+  Stream<List<ChattedUserVO>?> getChatListStream() {
+    final String currentUserID = _firebaseAuth.currentUser!.uid;
+
+    return _firebaseDatabase
+        .ref('users/$currentUserID/chats')
+        .orderByChild('date_time') // Order by 'date_time'
+        .onValue // Listen to changes in the 'chats' node
+        .map((event) {
+      if (event.snapshot.value != null) {
+        final data = Map<String, dynamic>.from(event.snapshot.value as Map);
+        return data.values.map((e) {
+          return ChattedUserVO.fromJson(Map<String, dynamic>.from(e));
+        }).toList();
+      } else {
+        return null; // Return null if there's no data
+      }
     });
   }
 }

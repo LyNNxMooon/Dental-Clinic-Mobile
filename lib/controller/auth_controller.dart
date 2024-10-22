@@ -29,10 +29,31 @@ class AuthController extends BaseController {
 
   final _filePickerUtil = FilePickerUtil();
 
+  RxList<String> adminUID = <String>[].obs;
+
   @override
   void onInit() {
     getUser();
+    callAdmin();
     super.onInit();
+  }
+
+  callAdmin() async {
+    setLoadingState = LoadingState.loading;
+    _firebaseService.getAdminUID().listen(
+      (event) {
+        if (event == null || event.isEmpty) {
+          setLoadingState = LoadingState.error;
+        } else {
+          adminUID.add(event.first.id);
+          setLoadingState = LoadingState.complete;
+        }
+      },
+    ).onError((error) {
+      setLoadingState = LoadingState.error;
+    });
+
+    update();
   }
 
   showPictureDialogForRegister(BuildContext context) {

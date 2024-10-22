@@ -3,20 +3,24 @@
 import 'package:dental_clinic_mobile/constants/colors.dart';
 import 'package:dental_clinic_mobile/constants/text.dart';
 import 'package:dental_clinic_mobile/controller/auth_controller.dart';
+import 'package:dental_clinic_mobile/controller/chat_controller.dart';
 import 'package:dental_clinic_mobile/controller/feedback_controller.dart';
 import 'package:dental_clinic_mobile/data/feedback_vo.dart';
 import 'package:dental_clinic_mobile/screens/add_feedback_screen.dart';
+import 'package:dental_clinic_mobile/screens/chat_screen.dart';
 import 'package:dental_clinic_mobile/screens/feed_back_detail_screen.dart';
 import 'package:dental_clinic_mobile/widgets/admin_access_info_widget.dart';
 import 'package:dental_clinic_mobile/widgets/error_widget.dart';
 import 'package:dental_clinic_mobile/widgets/load_fail_widget.dart';
 import 'package:dental_clinic_mobile/widgets/loading_state_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 final _authController = Get.put(AuthController());
 final _feedbackController = Get.put(FeedbackController());
+final _chatController = Get.put(ChatController());
 
 class ContactScreen extends StatelessWidget {
   const ContactScreen({super.key});
@@ -48,34 +52,24 @@ class ContactScreen extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              item(
-                context,
-                Icons.monetization_on,
-                () {},
-              ),
-              item(
-                context,
-                Icons.rate_review_outlined,
-                () {
-                  if (_authController.currentUser.value?.isBanned ?? false) {
-                    showDialog(
-                      context: context,
-                      builder: (context) => CustomErrorWidget(
-                        errorMessage:
-                            "You have been banned by admin. Please contact to us!",
-                        function: () => Get.back(),
-                      ),
-                    );
-                  } else {
-                    Get.to(() => const AddFeedbackScreen());
-                  }
-                },
-              ),
-              item(
-                context,
-                Icons.message,
-                () {},
-              )
+              item(context, Icons.monetization_on, () {}, false),
+              item(context, Icons.rate_review_outlined, () {
+                if (_authController.currentUser.value?.isBanned ?? false) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => CustomErrorWidget(
+                      errorMessage:
+                          "You have been banned by admin. Please contact to us!",
+                      function: () => Get.back(),
+                    ),
+                  );
+                } else {
+                  Get.to(() => const AddFeedbackScreen());
+                }
+              }, false),
+              item(context, Icons.message, () {
+                Get.to(() => ChatScreen());
+              }, true)
             ],
           ),
         ),
@@ -104,7 +98,8 @@ class ContactScreen extends StatelessWidget {
     );
   }
 
-  Widget item(BuildContext context, IconData icon, VoidCallback function) {
+  Widget item(
+      BuildContext context, IconData icon, VoidCallback function, bool isChat) {
     return GestureDetector(
       onTap: function,
       child: Container(
@@ -122,13 +117,43 @@ class ContactScreen extends StatelessWidget {
             ),
           ], //border corner radius
         ),
-        child: Center(
-          child: Icon(
-            icon,
-            color: kSecondaryColor,
-            size: 35,
-          ),
-        ),
+        child: isChat
+            ? Stack(
+                children: [
+                  Center(
+                    child: Icon(
+                      icon,
+                      color: kSecondaryColor,
+                      size: 35,
+                    ),
+                  ),
+                  _chatController.chattedUsers.isEmpty
+                      ? const SizedBox()
+                      : _chatController.chattedUsers[0].lastSenderID !=
+                              (FirebaseAuth.instance.currentUser?.uid ?? "")
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 8, right: 8),
+                              child: Align(
+                                alignment: Alignment.topRight,
+                                child: Container(
+                                  width: 6,
+                                  height: 6,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(3),
+                                      color: kErrorColor),
+                                ),
+                              ),
+                            )
+                          : const SizedBox()
+                ],
+              )
+            : Center(
+                child: Icon(
+                  icon,
+                  color: kSecondaryColor,
+                  size: 35,
+                ),
+              ),
       ),
     );
   }
