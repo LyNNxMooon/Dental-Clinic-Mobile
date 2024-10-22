@@ -1,5 +1,6 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:dental_clinic_mobile/constants/colors.dart';
+import 'package:dental_clinic_mobile/controller/appointment_controller.dart';
 import 'package:dental_clinic_mobile/controller/auth_controller.dart';
 import 'package:dental_clinic_mobile/controller/chat_controller.dart';
 
@@ -14,6 +15,7 @@ import 'package:get/get.dart';
 
 final _authController = Get.put(AuthController());
 final _chatController = Get.put(ChatController());
+final _appointmentController = Get.put(AppointmentController());
 
 class NavigationScreen extends StatefulWidget {
   const NavigationScreen({super.key});
@@ -61,11 +63,15 @@ class _NavigationScreenState extends State<NavigationScreen> {
           setState(() {
             index = selectedIndex;
 
-            if (selectedIndex == 4 ||
-                selectedIndex == 1 ||
-                selectedIndex == 3) {
+            if (selectedIndex == 4 || selectedIndex == 3) {
               _authController.getUser();
               _authController.callAdmin();
+            }
+
+            if (selectedIndex == 1) {
+              _authController.getUser();
+              _authController.callAdmin();
+              _appointmentController.callAppointments();
             }
 
             if (selectedIndex == 3) {
