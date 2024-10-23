@@ -9,6 +9,7 @@ import 'package:dental_clinic_mobile/data/feedback_vo.dart';
 import 'package:dental_clinic_mobile/screens/add_feedback_screen.dart';
 import 'package:dental_clinic_mobile/screens/chat_screen.dart';
 import 'package:dental_clinic_mobile/screens/feed_back_detail_screen.dart';
+import 'package:dental_clinic_mobile/screens/pharmacy_screen.dart';
 import 'package:dental_clinic_mobile/widgets/admin_access_info_widget.dart';
 import 'package:dental_clinic_mobile/widgets/error_widget.dart';
 import 'package:dental_clinic_mobile/widgets/load_fail_widget.dart';
@@ -52,7 +53,20 @@ class ContactScreen extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              item(context, Icons.monetization_on, () {}, false),
+              item(context, Icons.monetization_on, () {
+                if (_authController.currentUser.value?.isBanned ?? false) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => CustomErrorWidget(
+                      errorMessage:
+                          "You have been banned by admin. Please contact to us!",
+                      function: () => Get.back(),
+                    ),
+                  );
+                } else {
+                  Get.to(() => const PharmacyScreen());
+                }
+              }, false),
               item(context, Icons.rate_review_outlined, () {
                 if (_authController.currentUser.value?.isBanned ?? false) {
                   showDialog(

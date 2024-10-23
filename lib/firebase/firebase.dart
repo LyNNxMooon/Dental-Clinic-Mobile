@@ -9,6 +9,7 @@ import 'package:dental_clinic_mobile/data/doctor_vo.dart';
 import 'package:dental_clinic_mobile/data/emergency_saving_vo.dart';
 import 'package:dental_clinic_mobile/data/feedback_vo.dart';
 import 'package:dental_clinic_mobile/data/message_vo.dart';
+import 'package:dental_clinic_mobile/data/payment_vo.dart';
 import 'package:dental_clinic_mobile/data/user_vo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -174,6 +175,15 @@ class FirebaseServices {
       print(error);
       return Future.error(error);
     }
+  }
+
+  Stream<List<PaymentVO>?> getPaymentListStream() {
+    return databaseRef.child("payments").onValue.map((event) {
+      return event.snapshot.children.map<PaymentVO>((snapshot) {
+        return PaymentVO.fromJson(
+            Map<String, dynamic>.from(snapshot.value as Map));
+      }).toList();
+    });
   }
 
   //firebase storage
