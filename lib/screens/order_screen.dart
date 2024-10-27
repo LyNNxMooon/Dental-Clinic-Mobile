@@ -143,7 +143,9 @@ class _OrderScreenState extends State<OrderScreen> {
                                     ? kThirdColor
                                     : order.orderStatus == "Delivered"
                                         ? kFourthColor
-                                        : kSecondaryColor)),
+                                        : order.orderStatus == "Rejected"
+                                            ? kErrorColor
+                                            : kSecondaryColor)),
                       ])),
                       const Gap(15),
                       RichText(
