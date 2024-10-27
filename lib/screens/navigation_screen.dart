@@ -3,6 +3,7 @@ import 'package:dental_clinic_mobile/constants/colors.dart';
 import 'package:dental_clinic_mobile/controller/appointment_controller.dart';
 import 'package:dental_clinic_mobile/controller/auth_controller.dart';
 import 'package:dental_clinic_mobile/controller/chat_controller.dart';
+import 'package:dental_clinic_mobile/controller/order_controller.dart';
 
 import 'package:dental_clinic_mobile/screens/appointment_screen.dart';
 import 'package:dental_clinic_mobile/screens/contact_screen.dart';
@@ -16,6 +17,7 @@ import 'package:get/get.dart';
 final _authController = Get.put(AuthController());
 final _chatController = Get.put(ChatController());
 final _appointmentController = Get.put(AppointmentController());
+final _orderController = Get.put(OrderController());
 
 class NavigationScreen extends StatefulWidget {
   const NavigationScreen({super.key});
@@ -76,6 +78,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
             if (selectedIndex == 3) {
               _chatController.callChattedUsers();
+              _orderController.callOrders();
             }
           });
         },
