@@ -72,13 +72,12 @@ class DoctorDetailScreen extends StatelessWidget {
                       style: TextStyle(
                           color: kSecondaryColor,
                           fontWeight: FontWeight.bold,
-                          fontSize: 17)),
+                          fontSize: 16)),
                   const Gap(10),
                   Text(
-                      textAlign: TextAlign.justify,
+                      textAlign: TextAlign.center,
                       doctor.bio,
                       style: const TextStyle(
-                        fontSize: 16,
                         color: kFourthColor,
                       )),
                   const Gap(20),
@@ -86,11 +85,10 @@ class DoctorDetailScreen extends StatelessWidget {
                       style: TextStyle(
                           color: kSecondaryColor,
                           fontWeight: FontWeight.bold,
-                          fontSize: 17)),
+                          fontSize: 16)),
                   const Gap(10),
                   Text(doctor.specialist,
                       style: const TextStyle(
-                        fontSize: 16,
                         color: kFourthColor,
                       )),
                   const Gap(20),
@@ -120,8 +118,8 @@ class DoctorDetailScreen extends StatelessWidget {
                       style: TextStyle(
                           color: kSecondaryColor,
                           fontWeight: FontWeight.bold,
-                          fontSize: 17)),
-                  const Gap(20),
+                          fontSize: 16)),
+                  const Gap(15),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: doctor.availability.entries.map<Widget>((entry) {
@@ -168,11 +166,10 @@ Widget userCred(BuildContext context, String type, String value) {
             style: const TextStyle(
                 color: kSecondaryColor,
                 fontWeight: FontWeight.bold,
-                fontSize: 17)),
+                fontSize: 16)),
         TextSpan(
             text: value,
             style: const TextStyle(
-              fontSize: 16,
               color: kFourthColor,
             )),
       ],

@@ -93,6 +93,8 @@ class ProfileScreen extends StatelessWidget {
         const Gap(15),
         userCred(context, "Email",
             FirebaseAuth.instance.currentUser?.email ?? " - "),
+        const Gap(15),
+        userCred(context, "Phone", (user?.phone ?? 0).toString()),
         const Gap(35),
         CustomButton(
             name: "Update Profile",

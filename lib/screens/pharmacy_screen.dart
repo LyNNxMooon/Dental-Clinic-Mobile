@@ -1,4 +1,6 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, avoid_print
+
+import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dental_clinic_mobile/constants/colors.dart';
@@ -6,8 +8,13 @@ import 'package:dental_clinic_mobile/constants/text.dart';
 import 'package:dental_clinic_mobile/controller/pharmacy_controller.dart';
 import 'package:dental_clinic_mobile/data/pharmacy_vo.dart';
 import 'package:dental_clinic_mobile/screens/order_screen.dart';
+import 'package:dental_clinic_mobile/screens/place_order_screen.dart';
+import 'package:dental_clinic_mobile/screens/search_pharmacy_screen.dart';
 import 'package:dental_clinic_mobile/widgets/button_widget.dart';
+import 'package:dental_clinic_mobile/widgets/load_fail_widget.dart';
+import 'package:dental_clinic_mobile/widgets/loading_state_widget.dart';
 import 'package:dental_clinic_mobile/widgets/loading_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -15,8 +22,39 @@ import 'package:lottie/lottie.dart';
 
 final _pharmacyController = Get.put(PharmacyController());
 
-class PharmacyScreen extends StatelessWidget {
+class PharmacyScreen extends StatefulWidget {
   const PharmacyScreen({super.key});
+
+  @override
+  State<PharmacyScreen> createState() => _PharmacyScreenState();
+}
+
+class _PharmacyScreenState extends State<PharmacyScreen> {
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    startTimer();
+  }
+
+  void startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      getCarts();
+    });
+  }
+
+  void getCarts() {
+    setState(() {
+      print("--Updated--");
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +86,9 @@ class PharmacyScreen extends StatelessWidget {
                   context,
                   "Search",
                   Icons.search,
-                  () {},
+                  () {
+                    Get.to(() => const SearchPharmacyScreen());
+                  },
                 ),
                 item(
                   context,
@@ -59,10 +99,46 @@ class PharmacyScreen extends StatelessWidget {
               ],
             ),
             const Gap(30),
-            const PharmacyList(),
+            Obx(
+              () => LoadingStateWidget(
+                  loadingState: _pharmacyController.getLoadingState,
+                  loadingSuccessWidget: SizedBox(
+                    height: 200,
+                    child: ListView.separated(
+                      separatorBuilder: (context, index) => const SizedBox(
+                        width: 25,
+                      ),
+                      scrollDirection: Axis.horizontal,
+                      shrinkWrap: true,
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      itemBuilder: (context, index) => GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _pharmacyController.addItemToCart(
+                                  _pharmacyController.pharmacies[index].name,
+                                  _pharmacyController.pharmacies[index].url,
+                                  _pharmacyController.pharmacies[index].price);
+                            });
+                          },
+                          child: PharmacyCard(
+                              pharmacy: _pharmacyController.pharmacies[index])),
+                      itemCount: _pharmacyController.pharmacies.length,
+                    ),
+                  ),
+                  loadingInitWidget: Padding(
+                    padding: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.height * 0.07,
+                        bottom: MediaQuery.of(context).size.height * 0.07),
+                    child: LoadFailWidget(
+                      function: () {
+                        _pharmacyController.callPharmacy();
+                      },
+                    ),
+                  ),
+                  paddingTop: 0),
+            ),
             const Gap(25),
-            Expanded(
-                child: SingleChildScrollView(
+            SingleChildScrollView(
               child: Column(
                 children: [
                   const Text(
@@ -83,23 +159,124 @@ class PharmacyScreen extends StatelessWidget {
                       : ListView.separated(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) => const SizedBox(),
+                          itemBuilder: (context, index) =>
+                              cartItemTile(context, index),
                           separatorBuilder: (context, index) => const Gap(20),
                           itemCount: _pharmacyController.cartList.length))
                 ],
               ),
-            )),
+            ),
             const Gap(20),
             Obx(() => _pharmacyController.cartList.isEmpty
                 ? const SizedBox()
                 : CustomButton(
                     name: "Order",
-                    function: () {},
-                  ))
+                    function: () => Get.to(() => const PlaceOrderScreen()),
+                  )),
+            const Gap(30),
           ],
         ),
       ),
     ));
+  }
+
+  Widget cartItemTile(BuildContext context, int index) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      margin: const EdgeInsets.symmetric(horizontal: 3),
+      height: 70,
+      decoration: BoxDecoration(
+        color: kBtnGrayColor,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1), // Shadow color
+            spreadRadius: 3, // Spread radius
+            blurRadius: 5, // Blur radius
+            offset: const Offset(0, 3), // Offset of the shadow
+          ),
+        ], //border corner radius
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(width: 0.3),
+                ),
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: CachedNetworkImage(
+                      imageUrl: _pharmacyController.cartList[index].url,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => const LoadingWidget(),
+                      errorWidget: (context, url, error) => const Center(
+                        child: Icon(Icons.error),
+                      ),
+                    )),
+              ),
+              const Gap(15),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                      width: 70,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            Text(_pharmacyController.cartList[index].name),
+                          ],
+                        ),
+                      )),
+                  SizedBox(
+                    width: 70,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          Text(
+                              "${_pharmacyController.cartList[index].price} Ks"),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              )
+            ],
+          ),
+          Row(
+            children: [
+              GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (_pharmacyController.cartList[index].qty > 1) {
+                        --_pharmacyController.cartList[index].qty;
+                        _pharmacyController.cartList[index].price =
+                            _pharmacyController.cartList[index].price -
+                                _pharmacyController.cartList[index].initPrice;
+                      }
+                    });
+                  },
+                  child: const Icon(CupertinoIcons.minus_circle)),
+              const Gap(10),
+              Text(_pharmacyController.cartList[index].qty.toString()),
+              const Gap(10),
+              GestureDetector(
+                  onTap: () => _pharmacyController.cartList
+                      .remove(_pharmacyController.cartList[index]),
+                  child: const Icon(Icons.delete_outline_outlined)),
+            ],
+          )
+        ],
+      ),
+    );
   }
 
   Widget item(
@@ -119,37 +296,6 @@ class PharmacyScreen extends StatelessWidget {
         child: Row(
           children: [Icon(icon), const Gap(10), Text(name)],
         ),
-      ),
-    );
-  }
-}
-
-class PharmacyList extends StatelessWidget {
-  const PharmacyList({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 200,
-      child: ListView.separated(
-        separatorBuilder: (context, index) => const SizedBox(
-          width: 25,
-        ),
-        scrollDirection: Axis.horizontal,
-        shrinkWrap: true,
-        physics: const AlwaysScrollableScrollPhysics(),
-        itemBuilder: (context, index) => GestureDetector(
-            onTap: () {},
-            child: PharmacyCard(
-                pharmacy: PharmacyVO(
-                    id: 1,
-                    url:
-                        "https://medsgo.ph/images/detailed/35/Biogesic_43iz-v8_18kn-2w.png",
-                    name: "Biogesic 500mg",
-                    price: 1500.0))),
-        itemCount: 5,
       ),
     );
   }

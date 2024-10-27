@@ -211,15 +211,27 @@ class AuthController extends BaseController {
     update();
   }
 
-  Future register(String email, String password, String confirmPassword,
-      String name, String age, String gender, BuildContext context) async {
+  Future register(
+      String phone,
+      String address,
+      String allergicMedicine,
+      String email,
+      String password,
+      String confirmPassword,
+      String name,
+      String age,
+      String gender,
+      BuildContext context) async {
     if (name.isEmpty ||
         email.isEmpty ||
         password.isEmpty ||
         confirmPassword.isEmpty ||
         age.isEmpty ||
         gender.isEmpty ||
-        userRegisterProfile.value == null) {
+        userRegisterProfile.value == null ||
+        phone.isEmpty ||
+        address.isEmpty ||
+        allergicMedicine.isEmpty) {
       setLoadingState = LoadingState.error;
       setErrorMessage = "Fill all the fields!";
 
@@ -259,7 +271,10 @@ class AuthController extends BaseController {
               isBanned: false,
               url: fileURL,
               age: int.parse(age),
-              gender: gender);
+              gender: gender,
+              address: address,
+              allergicMedicine: allergicMedicine,
+              phone: int.parse(phone));
 
           _firebaseService.savePatient(patientVo).then(
             (value) {
@@ -371,8 +386,16 @@ class AuthController extends BaseController {
     update();
   }
 
-  Future updateProfile(String id, String name, String age, String gender,
-      bool isBanned, BuildContext context) async {
+  Future updateProfile(
+      String phone,
+      String address,
+      String allergicMedicine,
+      String id,
+      String name,
+      String age,
+      String gender,
+      bool isBanned,
+      BuildContext context) async {
     if (currentUser.value == null) {
       setLoadingState = LoadingState.error;
 
@@ -386,7 +409,12 @@ class AuthController extends BaseController {
         ),
       );
     } else {
-      if (name.isEmpty || age.isEmpty || imageFile.value == null) {
+      if (name.isEmpty ||
+          age.isEmpty ||
+          imageFile.value == null ||
+          phone.isEmpty ||
+          address.isEmpty ||
+          allergicMedicine.isEmpty) {
         setLoadingState = LoadingState.error;
 
         setErrorMessage = "Fill all the fields!";
@@ -407,7 +435,10 @@ class AuthController extends BaseController {
             isBanned: isBanned,
             url: fileURL,
             age: int.parse(age),
-            gender: gender);
+            gender: gender,
+            address: address,
+            allergicMedicine: allergicMedicine,
+            phone: int.parse(phone));
 
         return _firebaseService.savePatient(patient).then(
           (value) {

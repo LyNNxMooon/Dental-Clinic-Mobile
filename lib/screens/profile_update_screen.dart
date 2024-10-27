@@ -24,6 +24,12 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
       text: _authController.currentUser.value?.name ?? "");
   final _ageController = TextEditingController(
       text: (_authController.currentUser.value?.age ?? 0).toString());
+  final _phoneController = TextEditingController(
+      text: (_authController.currentUser.value?.phone ?? 0).toString());
+  final _addressController = TextEditingController(
+      text: _authController.currentUser.value?.address ?? "");
+  final _allergicMedicineController = TextEditingController(
+      text: _authController.currentUser.value?.allergicMedicine ?? "");
 
   @override
   void dispose() {
@@ -84,9 +90,32 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
             const Gap(20),
             CustomTextField(
               hintText: "Enter age to update",
-              label: "Phone",
+              label: "Age",
               controller: _ageController,
               keyboardType: TextInputType.number,
+            ),
+            const Gap(20),
+            CustomTextField(
+              hintText: "Enter phone to update",
+              label: "Phone",
+              controller: _phoneController,
+              keyboardType: TextInputType.number,
+            ),
+            const Gap(20),
+            CustomTextField(
+              hintText: "Enter address to update",
+              label: "Address",
+              controller: _addressController,
+              minLines: 2,
+              maxLines: 3,
+            ),
+            const Gap(20),
+            CustomTextField(
+              hintText: "Enter allergic to update",
+              label: "Allergic to",
+              controller: _allergicMedicineController,
+              minLines: 3,
+              maxLines: 6,
             ),
             const Gap(30),
             Obx(
@@ -97,6 +126,9 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
                     name: "Update",
                     function: () {
                       _authController.updateProfile(
+                          _phoneController.text,
+                          _addressController.text,
+                          _allergicMedicineController.text,
                           _authController.currentUser.value?.id ?? "",
                           _nameController.text,
                           _ageController.text,
@@ -109,6 +141,9 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
                     name: "Update",
                     function: () {
                       _authController.updateProfile(
+                          _phoneController.text,
+                          _addressController.text,
+                          _allergicMedicineController.text,
                           _authController.currentUser.value?.id ?? "",
                           _nameController.text,
                           _ageController.text,
@@ -118,6 +153,7 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
                     },
                   )),
             ),
+            const Gap(30),
           ],
         ),
       ),

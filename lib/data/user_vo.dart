@@ -5,6 +5,10 @@ part 'user_vo.g.dart';
 class UserVO {
   final String id;
   final String name;
+  final int phone;
+  final String address;
+  @JsonKey(name: 'allergic_medicine')
+  final String allergicMedicine;
   @JsonKey(name: "is_banned")
   final bool isBanned;
   final String url;
@@ -14,6 +18,9 @@ class UserVO {
   UserVO(
       {required this.id,
       required this.name,
+      required this.phone,
+      required this.address,
+      required this.allergicMedicine,
       required this.isBanned,
       required this.url,
       required this.age,

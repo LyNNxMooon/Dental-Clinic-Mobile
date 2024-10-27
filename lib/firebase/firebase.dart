@@ -4,12 +4,15 @@ import 'dart:io';
 
 import 'package:dental_clinic_mobile/data/admin_vo.dart';
 import 'package:dental_clinic_mobile/data/appointment_vo.dart';
+import 'package:dental_clinic_mobile/data/cart_item_vo.dart';
 import 'package:dental_clinic_mobile/data/chatted_user_vo.dart';
 import 'package:dental_clinic_mobile/data/doctor_vo.dart';
 import 'package:dental_clinic_mobile/data/emergency_saving_vo.dart';
 import 'package:dental_clinic_mobile/data/feedback_vo.dart';
 import 'package:dental_clinic_mobile/data/message_vo.dart';
+import 'package:dental_clinic_mobile/data/order_vo.dart';
 import 'package:dental_clinic_mobile/data/payment_vo.dart';
+import 'package:dental_clinic_mobile/data/pharmacy_vo.dart';
 import 'package:dental_clinic_mobile/data/user_vo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -118,6 +121,22 @@ class FirebaseServices {
     }
   }
 
+  Future<List<PharmacyVO>> getSearchPharmacyStream() async {
+    final databaseReference = FirebaseDatabase.instance.ref('pharmacy');
+    final snapshot = await databaseReference.orderByChild('name').get();
+
+    if (snapshot.exists) {
+      final pharmacyList = snapshot.children.map((pharmacy) {
+        return PharmacyVO.fromJson(
+            Map<String, dynamic>.from(pharmacy.value as Map));
+      }).toList();
+
+      return pharmacyList;
+    } else {
+      return [];
+    }
+  }
+
   Stream<List<AppointmentVO>?> getAppointmentListStream(String patientUid) {
     return databaseRef.child("appointments").onValue.map((event) {
       return event.snapshot.children
@@ -183,6 +202,97 @@ class FirebaseServices {
         return PaymentVO.fromJson(
             Map<String, dynamic>.from(snapshot.value as Map));
       }).toList();
+    });
+  }
+
+  Stream<List<PharmacyVO>?> getPharmacyListStream() {
+    return databaseRef.child("pharmacy").onValue.map((event) {
+      return event.snapshot.children.map<PharmacyVO>((snapshot) {
+        return PharmacyVO.fromJson(
+            Map<String, dynamic>.from(snapshot.value as Map));
+      }).toList();
+    });
+  }
+
+  Future saveOrder(OrderVO orderVo) async {
+    try {
+      return databaseRef
+          .child("orders")
+          .child(orderVo.id.toString())
+          .set(orderVo.toJson());
+    } on FirebaseException catch (error) {
+      print(error);
+      return Future.error(error.message ?? "");
+    }
+  }
+
+  Stream<List<OrderVO>?> getOrderListStream(String patientUid) {
+    return databaseRef.child("orders").onValue.map((event) {
+      return event.snapshot.children
+          .map<OrderVO?>((snapshot) {
+            try {
+              final rawValue = snapshot.value;
+              print("Raw snapshot value: $rawValue");
+
+              if (rawValue is Map) {
+                // Extract order data
+                final orderData = Map<String, dynamic>.from(rawValue);
+
+                // Check if 'items' exists and is a List
+                if (orderData['items'] is List) {
+                  // Map through the items and convert to CartItemVO
+                  final items = (orderData['items'] as List)
+                      .map((item) {
+                        if (item is Map) {
+                          return CartItemVO.fromJson(
+                              Map<String, dynamic>.from(item));
+                        } else {
+                          print("Unexpected item type: ${item.runtimeType}");
+                          return null; // or handle error
+                        }
+                      })
+                      .whereType<CartItemVO>()
+                      .toList();
+
+                  // Create the OrderVO instance
+                  final order = OrderVO(
+                    id: orderData['id'],
+                    items: items,
+                    totalPrice: (orderData['total_price'] is int)
+                        ? (orderData['total_price'] as int).toDouble()
+                        : orderData['total_price'], // Handle potential double
+                    orderStatus: orderData['order_status'],
+                    payment: orderData['payment'],
+                    slip: orderData['slip'] ?? "",
+                    patientID: orderData['patient_id'],
+                    patientName: orderData['patient_name'],
+                    patientPhone: orderData['patient_phone'],
+                    patientAddress: orderData['patient_address'],
+                    date: orderData['date'],
+                    deliveryFees: (orderData['delivery_fees'] is int)
+                        ? (orderData['delivery_fees'] as int).toDouble()
+                        : orderData['delivery_fees'],
+                  );
+
+                  // Filter orders by patientID
+                  if (order.patientID == patientUid) {
+                    return order;
+                  }
+                } else {
+                  print(
+                      "Unexpected items type: ${orderData['items']?.runtimeType}");
+                }
+              } else {
+                print(
+                    "Unexpected data type for snapshot ${snapshot.key}: ${rawValue.runtimeType}");
+              }
+            } catch (e) {
+              print("Error parsing order for snapshot ${snapshot.key}: $e");
+            }
+            return null;
+          })
+          .whereType<OrderVO>()
+          .toList();
     });
   }
 

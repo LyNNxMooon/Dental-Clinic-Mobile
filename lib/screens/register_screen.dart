@@ -28,6 +28,9 @@ class _RegisterPageState extends State<RegisterPage> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _ageController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _addressController = TextEditingController();
+  final _allergicMedicineController = TextEditingController();
 
   @override
   void dispose() {
@@ -36,6 +39,9 @@ class _RegisterPageState extends State<RegisterPage> {
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     _ageController.dispose();
+    _phoneController.dispose();
+    _addressController.dispose();
+    _allergicMedicineController.dispose();
     super.dispose();
   }
 
@@ -110,6 +116,29 @@ class _RegisterPageState extends State<RegisterPage> {
                 label: "Age",
                 controller: _ageController,
                 keyboardType: TextInputType.number,
+              ),
+              const Gap(20),
+              CustomTextField(
+                hintText: "Enter your Phone",
+                label: "Phone",
+                controller: _phoneController,
+                keyboardType: TextInputType.number,
+              ),
+              const Gap(20),
+              CustomTextField(
+                hintText: "Enter your Address",
+                label: "Address",
+                controller: _addressController,
+                minLines: 2,
+                maxLines: 3,
+              ),
+              const Gap(20),
+              CustomTextField(
+                hintText: "Enter what are you allergic to",
+                label: "Allergic to",
+                controller: _allergicMedicineController,
+                minLines: 3,
+                maxLines: 6,
               ),
               const Gap(20),
               CustomTextField(
@@ -195,6 +224,9 @@ class _RegisterPageState extends State<RegisterPage> {
                         name: "Register",
                         function: () {
                           _authController.register(
+                              _phoneController.text,
+                              _addressController.text,
+                              _allergicMedicineController.text,
                               _emailController.text,
                               _passwordController.text,
                               _confirmPasswordController.text,
@@ -207,6 +239,9 @@ class _RegisterPageState extends State<RegisterPage> {
                         name: "Register",
                         function: () {
                           _authController.register(
+                              _phoneController.text,
+                              _addressController.text,
+                              _allergicMedicineController.text,
                               _emailController.text,
                               _passwordController.text,
                               _confirmPasswordController.text,
