@@ -1,5 +1,5 @@
 import 'package:dental_clinic_mobile/constants/text.dart';
-import 'package:dental_clinic_mobile/controller/auth_controller.dart';
+import 'package:dental_clinic_mobile/controller/register_controller.dart';
 import 'package:dental_clinic_mobile/widgets/button_widget.dart';
 import 'package:dental_clinic_mobile/widgets/loading_state_widget.dart';
 import 'package:dental_clinic_mobile/widgets/textfield.dart';
@@ -9,7 +9,7 @@ import 'package:get/get.dart';
 
 import '../constants/colors.dart';
 
-final _authController = Get.put(AuthController());
+final _registerController = Get.put(RegisterController());
 String? _selectedGender;
 
 class RegisterPage extends StatefulWidget {
@@ -57,7 +57,7 @@ class _RegisterPageState extends State<RegisterPage> {
               Obx(
                 () => GestureDetector(
                   onTap: () {
-                    _authController.showPictureDialogForRegister(context);
+                    _registerController.showPictureDialog(context);
                   },
                   child: Container(
                     margin: EdgeInsets.symmetric(
@@ -67,7 +67,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         border: Border.all(color: kFourthColor, width: 1),
                         borderRadius:
                             const BorderRadius.all(Radius.circular(90))),
-                    child: _authController.userRegisterProfile.value == null
+                    child: _registerController.imageFile.value == null
                         ? const Center(
                             child: Icon(
                               Icons.add,
@@ -78,7 +78,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             borderRadius:
                                 const BorderRadius.all(Radius.circular(90)),
                             child: Image.file(
-                              _authController.userRegisterProfile.value!,
+                              _registerController.imageFile.value!,
                               fit: BoxFit.cover,
                             )),
                   ),
@@ -219,11 +219,11 @@ class _RegisterPageState extends State<RegisterPage> {
               Obx(
                 () => LoadingStateWidget(
                     paddingTop: 0,
-                    loadingState: _authController.getLoadingState,
+                    loadingState: _registerController.getLoadingState,
                     loadingSuccessWidget: CustomButton(
                         name: "Register",
                         function: () {
-                          _authController.register(
+                          _registerController.register(
                               _phoneController.text,
                               _addressController.text,
                               _allergicMedicineController.text,
@@ -238,7 +238,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     loadingInitWidget: CustomButton(
                         name: "Register",
                         function: () {
-                          _authController.register(
+                          _registerController.register(
                               _phoneController.text,
                               _addressController.text,
                               _allergicMedicineController.text,

@@ -25,8 +25,6 @@ class AuthController extends BaseController {
 
   final Rxn<File> imageFile = Rxn<File>();
 
-  final Rxn<File> userRegisterProfile = Rxn<File>();
-
   final _filePickerUtil = FilePickerUtil();
 
   RxList<String> adminUID = <String>[].obs;
@@ -52,59 +50,6 @@ class AuthController extends BaseController {
     ).onError((error) {
       setLoadingState = LoadingState.error;
     });
-
-    update();
-  }
-
-  showPictureDialogForRegister(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => SimpleDialog(
-        title: const Text(
-          "Choose an option",
-          style: TextStyle(
-              color: kSecondaryColor,
-              fontWeight: FontWeight.bold,
-              fontSize: 16),
-        ),
-        children: [
-          SimpleDialogOption(
-            onPressed: () {
-              _filePickerUtil.getImage(true).then(
-                    (value) => userRegisterProfile.value = value,
-                  );
-              Get.back();
-            },
-            child: const Row(
-              children: [
-                Icon(Icons.camera, size: 30),
-                Gap(10),
-                Text(
-                  "Open Camera",
-                )
-              ],
-            ),
-          ),
-          SimpleDialogOption(
-            onPressed: () {
-              _filePickerUtil.getImage(false).then(
-                    (value) => userRegisterProfile.value = value,
-                  );
-              Get.back();
-            },
-            child: const Row(
-              children: [
-                Icon(Icons.photo_rounded, size: 30),
-                Gap(10),
-                Text(
-                  "Choose From Gallery",
-                )
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
 
     update();
   }
@@ -208,98 +153,6 @@ class AuthController extends BaseController {
       );
     });
 
-    update();
-  }
-
-  Future register(
-      String phone,
-      String address,
-      String allergicMedicine,
-      String email,
-      String password,
-      String confirmPassword,
-      String name,
-      String age,
-      String gender,
-      BuildContext context) async {
-    if (name.isEmpty ||
-        email.isEmpty ||
-        password.isEmpty ||
-        confirmPassword.isEmpty ||
-        age.isEmpty ||
-        gender.isEmpty ||
-        userRegisterProfile.value == null ||
-        phone.isEmpty ||
-        address.isEmpty ||
-        allergicMedicine.isEmpty) {
-      setLoadingState = LoadingState.error;
-      setErrorMessage = "Fill all the fields!";
-
-      showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) => CustomErrorWidget(
-          errorMessage: getErrorMessage,
-          function: () {
-            Get.back();
-          },
-        ),
-      );
-    } else if (password != confirmPassword) {
-      setLoadingState = LoadingState.error;
-      setErrorMessage = "Passwords do not match!";
-
-      showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) => CustomErrorWidget(
-          errorMessage: getErrorMessage,
-          function: () {
-            Get.back();
-          },
-        ),
-      );
-    } else {
-      setLoadingState = LoadingState.loading;
-      String fileURL = await _uploadFileToFirebaseStorageForUserRegister();
-      return _firebaseService.firebaseSignUp(email, password).then(
-        (value) {
-          String id = FirebaseAuth.instance.currentUser?.uid ?? '';
-          final patientVo = UserVO(
-              id: id,
-              name: name,
-              isBanned: false,
-              url: fileURL,
-              age: int.parse(age),
-              gender: gender,
-              address: address,
-              allergicMedicine: allergicMedicine,
-              phone: int.parse(phone));
-
-          _firebaseService.savePatient(patientVo).then(
-            (value) {
-              getUser();
-              userRegisterProfile.value = null;
-              _hiveDAO.saveUserPassword(password);
-              setLoadingState = LoadingState.complete;
-            },
-          );
-        },
-      ).catchError((error) {
-        setLoadingState = LoadingState.error;
-        setErrorMessage = error.message;
-
-        showDialog(
-          context: context,
-          builder: (context) => CustomErrorWidget(
-            errorMessage: getErrorMessage,
-            function: () {
-              Get.back();
-            },
-          ),
-        );
-      });
-    }
     update();
   }
 
@@ -507,13 +360,5 @@ class AuthController extends BaseController {
 
     return FirebaseServices.uploadToFirebaseStorage(
         imageFile.value!, path, contentType);
-  }
-
-  Future _uploadFileToFirebaseStorageForUserRegister() {
-    String path = 'image';
-    String contentType = 'image/jpg';
-
-    return FirebaseServices.uploadToFirebaseStorage(
-        userRegisterProfile.value!, path, contentType);
   }
 }

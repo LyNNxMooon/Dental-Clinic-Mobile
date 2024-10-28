@@ -79,6 +79,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               controller: _newPasswordController,
               hintText: "Enter your new Password",
               label: "New Password",
+              minLines: 1,
+              maxLines: 1,
               isObsecure: showPassword,
               suffixIcon: IconButton(
                   onPressed: () {
@@ -101,6 +103,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               hintText: "Confirm your Password",
               label: "Confirm Password",
               isObsecure: showPassword,
+              minLines: 1,
+              maxLines: 1,
               suffixIcon: IconButton(
                   onPressed: () {
                     showPassword = !showPassword;
