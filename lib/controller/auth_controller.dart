@@ -354,6 +354,52 @@ class AuthController extends BaseController {
     update();
   }
 
+  Future<void> resetPassword(String email, BuildContext context) async {
+    setLoadingState = LoadingState.loading;
+
+    if (email.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please input your email.";
+
+      showDialog(
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else {
+      try {
+        await FirebaseAuth.instance.sendPasswordResetEmail(email: email).then(
+          (value) {
+            setLoadingState = LoadingState.complete;
+            showDialog(
+              context: context,
+              builder: (context) => const SuccessWidget(
+                  message:
+                      "Please check your Email. We have sent the password reset link"),
+            );
+          },
+        );
+      } catch (e) {
+        setLoadingState = LoadingState.error;
+        setErrorMessage = "$e";
+        showDialog(
+          context: context,
+          builder: (context) => CustomErrorWidget(
+            errorMessage: getErrorMessage,
+            function: () {
+              Get.back();
+            },
+          ),
+        );
+      }
+    }
+    update();
+  }
+
   Future _uploadFileToFirebaseStorage() {
     String path = 'image';
     String contentType = 'image/jpg';

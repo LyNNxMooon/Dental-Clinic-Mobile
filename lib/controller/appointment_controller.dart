@@ -54,6 +54,7 @@ class AppointmentController extends BaseController {
           doctorName: doctor.value!.name,
           patientId: _authController.currentUser.value!.id,
           patientName: _authController.currentUser.value!.name,
+          patientPhone: _authController.currentUser.value!.phone,
           date: date,
           time: time);
       return _firebaseService.saveAppointment(appointment).then(

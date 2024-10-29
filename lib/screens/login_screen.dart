@@ -95,7 +95,20 @@ class _LoginScreenState extends State<LoginScreen> {
                           color: kSecondaryColor,
                         )),
             ),
-            const Gap(40),
+            const Gap(10),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                  onPressed: () {
+                    _authController.resetPassword(
+                        _emailController.text, context);
+                  },
+                  child: const Text(
+                    "Forgot Password?",
+                    style: TextStyle(color: kSecondaryColor),
+                  )),
+            ),
+            const Gap(25),
             Obx(
               () => LoadingStateWidget(
                   paddingTop: 0,
