@@ -3,9 +3,10 @@ import 'package:dental_clinic_mobile/persistent/hive_dao.dart';
 import 'package:dental_clinic_mobile/widgets/textfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:oktoast/oktoast.dart';
 
 class PasswordPermissionWidget extends StatefulWidget {
   const PasswordPermissionWidget({super.key, required this.function});
@@ -40,14 +41,9 @@ class _PasswordPermissionWidgetState extends State<PasswordPermissionWidget> {
                   Get.back();
                   widget.function();
                 } else {
-                  Fluttertoast.showToast(
-                      msg: "Wrong Password!",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.CENTER,
-                      timeInSecForIosWeb: 1,
-                      backgroundColor: Colors.red,
-                      textColor: Colors.white,
-                      fontSize: 16.0);
+                  showToast("Wrong Password!",
+                      backgroundColor: kErrorColor,
+                      textStyle: const TextStyle(color: kPrimaryColor));
                 }
               },
               style: const ButtonStyle(

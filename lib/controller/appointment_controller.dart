@@ -70,6 +70,7 @@ class AppointmentController extends BaseController {
           );
 
           callAppointments();
+          doctor.value = null;
         },
       ).catchError((error) {
         setLoadingState = LoadingState.error;

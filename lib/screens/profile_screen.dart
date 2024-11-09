@@ -1,6 +1,7 @@
 import 'package:dental_clinic_mobile/constants/colors.dart';
 import 'package:dental_clinic_mobile/constants/images.dart';
 import 'package:dental_clinic_mobile/constants/text.dart';
+import 'package:dental_clinic_mobile/controller/appointment_controller.dart';
 import 'package:dental_clinic_mobile/controller/auth_controller.dart';
 import 'package:dental_clinic_mobile/data/user_vo.dart';
 import 'package:dental_clinic_mobile/screens/change_password_page.dart';
@@ -22,6 +23,7 @@ class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
 
   final _authController = Get.put(AuthController());
+  final _appointmentController = Get.put(AppointmentController());
 
   @override
   Widget build(BuildContext context) {
@@ -120,6 +122,15 @@ class ProfileScreen extends StatelessWidget {
                   context: context,
                   builder: (context) => CustomErrorWidget(
                     errorMessage: "Admin does not have access to this feature.",
+                    function: () => Get.back(),
+                  ),
+                );
+              } else if (_appointmentController.appointmentList.isNotEmpty) {
+                showDialog(
+                  context: context,
+                  builder: (context) => CustomErrorWidget(
+                    errorMessage:
+                        "You are temporarily unable to delete your account since you have upcoming appointments.",
                     function: () => Get.back(),
                   ),
                 );

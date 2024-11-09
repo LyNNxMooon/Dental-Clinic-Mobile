@@ -11,8 +11,9 @@ import 'package:dental_clinic_mobile/widgets/loading_widget.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+
 import 'package:get/get.dart';
+import 'package:oktoast/oktoast.dart';
 
 final _pharmacyController = Get.put(PharmacyController());
 
@@ -97,7 +98,9 @@ class _SearchPharmacyScreenState extends State<SearchPharmacyScreen> {
                             context,
                             _pharmacyController.searchedPharmacy[index].name,
                             _pharmacyController.searchedPharmacy[index].price,
-                            _pharmacyController.searchedPharmacy[index].url),
+                            _pharmacyController.searchedPharmacy[index].url,
+                            _pharmacyController
+                                .searchedPharmacy[index].isOutOfStock),
                       ),
                   separatorBuilder: (context, index) => const SizedBox(
                         height: 15,
@@ -107,8 +110,8 @@ class _SearchPharmacyScreenState extends State<SearchPharmacyScreen> {
     ));
   }
 
-  Widget searchItemTile(
-      BuildContext context, String name, double price, String url) {
+  Widget searchItemTile(BuildContext context, String name, double price,
+      String url, String isOutOfStock) {
     return Container(
       height: 80,
       decoration: BoxDecoration(
@@ -187,17 +190,21 @@ class _SearchPharmacyScreenState extends State<SearchPharmacyScreen> {
               )
             ],
           ),
-          IconButton(
-              onPressed: () {
-                _pharmacyController.addItemToCart(name, url, price);
-                _pharmacyController.update();
+          isOutOfStock == "InStock"
+              ? IconButton(
+                  onPressed: () {
+                    _pharmacyController.addItemToCart(name, url, price);
+                    _pharmacyController.update();
 
-                Fluttertoast.showToast(
-                    msg: "Item Added to cart",
-                    backgroundColor: kSecondaryColor,
-                    textColor: kFourthColor);
-              },
-              icon: const Icon(Icons.add_shopping_cart_sharp))
+                    showToast("Item Added to cart!",
+                        backgroundColor: kSecondaryColor,
+                        textStyle: const TextStyle(color: kPrimaryColor));
+                  },
+                  icon: const Icon(Icons.add_shopping_cart_sharp))
+              : const Text(
+                  "Out of stock",
+                  style: TextStyle(color: kErrorColor, fontSize: 9),
+                )
         ],
       ),
     );

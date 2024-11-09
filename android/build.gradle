@@ -1,3 +1,15 @@
+
+buildscript {
+    ext.kotlin_version = '1.7.10' // Ensure Kotlin version is set here
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.1.0' // This is where you add the Gradle plugin
+    }
+}
+
 allprojects {
     repositories {
         google()

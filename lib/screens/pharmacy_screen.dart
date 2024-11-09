@@ -113,12 +113,17 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
                       physics: const AlwaysScrollableScrollPhysics(),
                       itemBuilder: (context, index) => GestureDetector(
                           onTap: () {
-                            setState(() {
-                              _pharmacyController.addItemToCart(
-                                  _pharmacyController.pharmacies[index].name,
-                                  _pharmacyController.pharmacies[index].url,
-                                  _pharmacyController.pharmacies[index].price);
-                            });
+                            if (_pharmacyController
+                                    .pharmacies[index].isOutOfStock ==
+                                "InStock") {
+                              setState(() {
+                                _pharmacyController.addItemToCart(
+                                    _pharmacyController.pharmacies[index].name,
+                                    _pharmacyController.pharmacies[index].url,
+                                    _pharmacyController
+                                        .pharmacies[index].price);
+                              });
+                            }
                           },
                           child: PharmacyCard(
                               pharmacy: _pharmacyController.pharmacies[index])),
@@ -171,8 +176,10 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
                 ? const SizedBox()
                 : CustomButton(
                     name: "Order",
-                    function: () => Get.to(() => const PlaceOrderScreen()),
-                  )),
+                    function: () {
+                      _pharmacyController.calculateTotalPrice();
+                      Get.to(() => const PlaceOrderScreen());
+                    })),
             const Gap(30),
           ],
         ),
@@ -388,7 +395,12 @@ class PharmacyCard extends StatelessWidget {
                   ),
                 ),
               ),
-              const Icon(Icons.add)
+              pharmacy.isOutOfStock == "InStock"
+                  ? const Icon(Icons.add)
+                  : const Text(
+                      "(Out of Stock)",
+                      style: TextStyle(color: kErrorColor, fontSize: 9),
+                    )
             ],
           ),
         ],

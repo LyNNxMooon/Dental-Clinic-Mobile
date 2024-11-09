@@ -22,6 +22,12 @@ class PlaceOrderScreen extends StatefulWidget {
 
 class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
   @override
+  void initState() {
+    _pharmacyController.calculateTotalPrice();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
@@ -44,17 +50,18 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
               ],
             ),
             const Gap(40),
-            RichText(
-                text: TextSpan(children: [
-              const TextSpan(
-                  text: "Total - ",
-                  style: TextStyle(
-                      color: kSecondaryColor, fontWeight: FontWeight.bold)),
-              TextSpan(
-                  text:
-                      "${_pharmacyController.calculateTotalPrice().toString()} Ks",
-                  style: const TextStyle(color: kFourthColor)),
-            ])),
+            Obx(
+              () => RichText(
+                  text: TextSpan(children: [
+                const TextSpan(
+                    text: "Total - ",
+                    style: TextStyle(
+                        color: kSecondaryColor, fontWeight: FontWeight.bold)),
+                TextSpan(
+                    text: "${_pharmacyController.totalPrice.value} Ks",
+                    style: const TextStyle(color: kFourthColor)),
+              ])),
+            ),
             const Gap(15),
             Obx(
               () => LoadingStateWidget(

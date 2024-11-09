@@ -27,13 +27,13 @@ class PharmacyController extends BaseController {
 
   RxList<PharmacyVO> pharmacies = <PharmacyVO>[].obs;
 
-  double calculateTotalPrice() {
-    double totalPrice = 0.0;
-    for (CartItemVO item in cartList) {
-      totalPrice += item.price;
-    }
+  RxDouble totalPrice = 0.0.obs;
 
-    return totalPrice;
+  void calculateTotalPrice() {
+    totalPrice.value = 0.0;
+    for (CartItemVO item in cartList) {
+      totalPrice.value += item.price;
+    }
   }
 
   addItemToCart(String name, String url, double initPrice) {
