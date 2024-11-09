@@ -13,6 +13,7 @@ import 'package:dental_clinic_mobile/data/message_vo.dart';
 import 'package:dental_clinic_mobile/data/order_vo.dart';
 import 'package:dental_clinic_mobile/data/payment_vo.dart';
 import 'package:dental_clinic_mobile/data/pharmacy_vo.dart';
+import 'package:dental_clinic_mobile/data/treatment_vo.dart';
 import 'package:dental_clinic_mobile/data/user_vo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -137,6 +138,18 @@ class FirebaseServices {
     }
   }
 
+  Future saveTreatment(TreatmentVO treatmentVo) async {
+    try {
+      return databaseRef
+          .child("treatments")
+          .child(treatmentVo.id.toString())
+          .set(treatmentVo.toJson());
+    } on FirebaseException catch (error) {
+      print(error);
+      return Future.error(error);
+    }
+  }
+
   Stream<List<AppointmentVO>?> getAppointmentListStream(String patientUid) {
     return databaseRef.child("appointments").onValue.map((event) {
       return event.snapshot.children
@@ -150,6 +163,23 @@ class FirebaseServices {
             }
           })
           .whereType<AppointmentVO>()
+          .toList();
+    });
+  }
+
+  Stream<List<TreatmentVO>?> getTreatmentListStream(String patientUid) {
+    return databaseRef.child("treatments").onValue.map((event) {
+      return event.snapshot.children
+          .map<TreatmentVO?>((snapshot) {
+            final treatment = TreatmentVO.fromJson(
+                Map<String, dynamic>.from(snapshot.value as Map));
+            if (treatment.patientID == patientUid) {
+              return treatment;
+            } else {
+              return null;
+            }
+          })
+          .whereType<TreatmentVO>()
           .toList();
     });
   }

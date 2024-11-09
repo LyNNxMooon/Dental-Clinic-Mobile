@@ -10,6 +10,7 @@ import 'package:dental_clinic_mobile/screens/contact_screen.dart';
 import 'package:dental_clinic_mobile/screens/doctor_info_screen.dart';
 import 'package:dental_clinic_mobile/screens/emergency_saving_screen.dart';
 import 'package:dental_clinic_mobile/screens/profile_screen.dart';
+import 'package:dental_clinic_mobile/screens/treatment_screen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -34,6 +35,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
     ),
     Icon(
       Icons.date_range,
+      color: kPrimaryColor,
+    ),
+    Icon(
+      Icons.medication_liquid_sharp,
       color: kPrimaryColor,
     ),
     Icon(
@@ -102,12 +107,14 @@ class _NavigationScreenState extends State<NavigationScreen> {
         widget = const AppointmentScreen();
         break;
       case 2:
+        widget = const TreatmentScreen();
+      case 3:
         widget = const EmergencySavingScreen();
         break;
-      case 3:
+      case 4:
         widget = const ContactScreen();
         break;
-      case 4:
+      case 5:
         widget = ProfileScreen();
       default:
         widget = const DoctorInfoScreen();
