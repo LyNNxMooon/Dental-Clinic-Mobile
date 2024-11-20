@@ -148,6 +148,36 @@ class _OrderScreenState extends State<OrderScreen> {
                                             : kSecondaryColor)),
                       ])),
                       const Gap(15),
+                      Text(
+                        order.orderStatus == "Pending"
+                            ? "*Your order is being placed and preparing to deliver"
+                            : order.orderStatus == "Delivered"
+                                ? "*Your order has been delivered by the clinic and the deliver-man will contact to you."
+                                : order.orderStatus == "Completed"
+                                    ? "*Your order has been completed."
+                                    : "*Your order has been rejected by admin for the following reason.",
+                        style: TextStyle(
+                            color: order.orderStatus == "Rejected"
+                                ? kErrorColor
+                                : kFourthColor),
+                      ),
+                      order.orderRejectReason.isEmpty
+                          ? const SizedBox()
+                          : Padding(
+                              padding: const EdgeInsets.only(top: 15),
+                              child: RichText(
+                                  text: TextSpan(children: [
+                                const TextSpan(
+                                    text: "Order reject reason - ",
+                                    style: TextStyle(
+                                        color: kSecondaryColor,
+                                        fontWeight: FontWeight.bold)),
+                                TextSpan(
+                                    text: order.orderRejectReason,
+                                    style: const TextStyle(color: kErrorColor)),
+                              ])),
+                            ),
+                      const Gap(15),
                       RichText(
                           text: TextSpan(children: [
                         const TextSpan(
