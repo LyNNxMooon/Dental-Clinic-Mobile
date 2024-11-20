@@ -131,7 +131,10 @@ class _TreatmentDetailScreenState extends State<TreatmentDetailScreen> {
                           fontWeight: FontWeight.bold,
                           fontSize: 17)),
                   TextSpan(
-                      text: widget.treatment.paymentStatus,
+                      text: widget.treatment.paymentStatus == "Un-paid" &&
+                              widget.treatment.slip.isNotEmpty
+                          ? "In Review"
+                          : widget.treatment.paymentStatus,
                       style: const TextStyle(
                           color: kFourthColor,
                           fontWeight: FontWeight.bold,

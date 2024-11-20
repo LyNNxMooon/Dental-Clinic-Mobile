@@ -23,6 +23,7 @@ class OrderScreen extends StatefulWidget {
 
 class _OrderScreenState extends State<OrderScreen> {
   Map<int, bool> isDropMap = {};
+  bool isCompleted = false;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -53,15 +54,15 @@ class _OrderScreenState extends State<OrderScreen> {
                       orderList(context, _orderController.orderList),
                   loadingInitWidget: Padding(
                     padding: EdgeInsets.only(
-                        top: MediaQuery.of(context).size.height * 0.07,
-                        bottom: MediaQuery.of(context).size.height * 0.07),
+                        top: MediaQuery.of(context).size.height * 0.35,
+                        bottom: MediaQuery.of(context).size.height * 0.0),
                     child: LoadFailWidget(
                       function: () {
                         _orderController.callOrders();
                       },
                     ),
                   ),
-                  paddingTop: MediaQuery.of(context).size.height * 0.07),
+                  paddingTop: MediaQuery.of(context).size.height * 0.35),
             ),
             const Gap(20),
           ],
@@ -177,6 +178,37 @@ class _OrderScreenState extends State<OrderScreen> {
                                     style: const TextStyle(color: kErrorColor)),
                               ])),
                             ),
+                      order.orderStatus == "Delivered"
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Checkbox(
+                                      activeColor: kSecondaryColor,
+                                      value: isCompleted,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          isCompleted = !isCompleted;
+                                        });
+                                      },
+                                    ),
+                                    //const Gap(20),
+                                    const Text(
+                                      "Order Completed",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    )
+                                  ],
+                                ),
+                                const Gap(5),
+                                const Text(
+                                  "*Select only when your order has completely arrived",
+                                  style: TextStyle(color: kErrorColor),
+                                ),
+                              ],
+                            )
+                          : const SizedBox(),
                       const Gap(15),
                       RichText(
                           text: TextSpan(children: [
@@ -312,6 +344,42 @@ class _OrderScreenState extends State<OrderScreen> {
                                 "${(order.totalPrice + order.deliveryFees).toString()} Ks",
                             style: const TextStyle(color: kFourthColor)),
                       ])),
+                      order.orderStatus == "Delivered"
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 20),
+                              child: TextButton(
+                                  style: const ButtonStyle(
+                                      backgroundColor: WidgetStatePropertyAll(
+                                          kSecondaryColor)),
+                                  onPressed: () {
+                                    _orderController.updateOrder(
+                                        context,
+                                        order.id,
+                                        order.items,
+                                        order.totalPrice,
+                                        isCompleted
+                                            ? "Completed"
+                                            : order.orderStatus,
+                                        order.payment,
+                                        order.slip,
+                                        order.patientID,
+                                        order.patientName,
+                                        order.patientPhone,
+                                        order.patientAddress,
+                                        order.deliveryFees,
+                                        order.date,
+                                        order.orderRejectReason);
+                                    setState(() {
+                                      isDropMap[index] = !isExpanded;
+                                      isCompleted = false;
+                                    });
+                                  },
+                                  child: const Text(
+                                    "Update",
+                                    style: TextStyle(color: kPrimaryColor),
+                                  )),
+                            )
+                          : const SizedBox()
                     ],
                   )
           ],
