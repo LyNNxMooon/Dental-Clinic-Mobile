@@ -1,6 +1,7 @@
 import 'package:dental_clinic_mobile/constants/colors.dart';
 import 'package:dental_clinic_mobile/constants/text.dart';
 import 'package:dental_clinic_mobile/controller/auth_controller.dart';
+import 'package:dental_clinic_mobile/utils/enums.dart';
 
 import 'package:dental_clinic_mobile/widgets/button_widget.dart';
 import 'package:dental_clinic_mobile/widgets/textfield.dart';
@@ -71,6 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
               hintText: "Enter your Email",
               label: "Email",
               controller: _emailController,
+              validator: Validator.email,
             ),
             const Gap(20),
             CustomTextField(

@@ -131,16 +131,9 @@ class AuthController extends BaseController {
   Future login(String email, String password, BuildContext context) async {
     setLoadingState = LoadingState.loading;
 
-    _firebaseService.firebaseSignIn(email, password).then(
-      (value) {
-        getUser();
-
-        _hiveDAO.saveUserPassword(password);
-        setLoadingState = LoadingState.complete;
-      },
-    ).catchError((error) {
+    if (email.isEmpty && password.isEmpty) {
       setLoadingState = LoadingState.error;
-      setErrorMessage = error.message;
+      setErrorMessage = "Please enter both email and password!";
 
       showDialog(
         context: context,
@@ -151,8 +144,55 @@ class AuthController extends BaseController {
           },
         ),
       );
-    });
+    } else if (email.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter your email!";
 
+      showDialog(
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (password.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter your password!";
+
+      showDialog(
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else {
+      _firebaseService.firebaseSignIn(email, password).then(
+        (value) {
+          getUser();
+
+          _hiveDAO.saveUserPassword(password);
+          setLoadingState = LoadingState.complete;
+        },
+      ).catchError((error) {
+        setLoadingState = LoadingState.error;
+        setErrorMessage = error.message;
+
+        showDialog(
+          context: context,
+          builder: (context) => CustomErrorWidget(
+            errorMessage: getErrorMessage,
+            function: () {
+              Get.back();
+            },
+          ),
+        );
+      });
+    }
     update();
   }
 
@@ -248,6 +288,7 @@ class AuthController extends BaseController {
       String age,
       String gender,
       bool isBanned,
+      String url,
       BuildContext context) async {
     if (currentUser.value == null) {
       setLoadingState = LoadingState.error;
@@ -262,15 +303,46 @@ class AuthController extends BaseController {
         ),
       );
     } else {
-      if (name.isEmpty ||
-          age.isEmpty ||
-          imageFile.value == null ||
-          phone.isEmpty ||
-          address.isEmpty ||
-          allergicMedicine.isEmpty) {
+      if (name.isEmpty) {
         setLoadingState = LoadingState.error;
 
-        setErrorMessage = "Fill all the fields!";
+        setErrorMessage = "PLease enter your name to update!";
+
+        showDialog(
+          context: context,
+          builder: (context) => CustomErrorWidget(
+            errorMessage: getErrorMessage,
+            function: () => Get.back(),
+          ),
+        );
+      } else if (age.isEmpty) {
+        setLoadingState = LoadingState.error;
+
+        setErrorMessage = "PLease enter your age to update!";
+
+        showDialog(
+          context: context,
+          builder: (context) => CustomErrorWidget(
+            errorMessage: getErrorMessage,
+            function: () => Get.back(),
+          ),
+        );
+      } else if (phone.isEmpty) {
+        setLoadingState = LoadingState.error;
+
+        setErrorMessage = "PLease enter your phone to update!";
+
+        showDialog(
+          context: context,
+          builder: (context) => CustomErrorWidget(
+            errorMessage: getErrorMessage,
+            function: () => Get.back(),
+          ),
+        );
+      } else if (address.isEmpty) {
+        setLoadingState = LoadingState.error;
+
+        setErrorMessage = "PLease enter your address to update!";
 
         showDialog(
           context: context,
@@ -281,7 +353,9 @@ class AuthController extends BaseController {
         );
       } else {
         setLoadingState = LoadingState.loading;
-        String fileURL = await _uploadFileToFirebaseStorage();
+        String fileURL = imageFile.value == null
+            ? url
+            : await _uploadFileToFirebaseStorage();
         final patient = UserVO(
             id: id,
             name: name,
@@ -290,7 +364,8 @@ class AuthController extends BaseController {
             age: int.parse(age),
             gender: gender,
             address: address,
-            allergicMedicine: allergicMedicine,
+            allergicMedicine:
+                allergicMedicine.isEmpty ? "Non" : allergicMedicine,
             phone: int.parse(phone));
 
         return _firebaseService.savePatient(patient).then(

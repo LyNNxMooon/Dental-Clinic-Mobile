@@ -1,5 +1,6 @@
 import 'package:dental_clinic_mobile/constants/text.dart';
 import 'package:dental_clinic_mobile/controller/register_controller.dart';
+import 'package:dental_clinic_mobile/utils/enums.dart';
 import 'package:dental_clinic_mobile/widgets/button_widget.dart';
 import 'package:dental_clinic_mobile/widgets/loading_state_widget.dart';
 import 'package:dental_clinic_mobile/widgets/textfield.dart';
@@ -108,6 +109,7 @@ class _RegisterPageState extends State<RegisterPage> {
               CustomTextField(
                 hintText: "Enter your Email",
                 label: "Email",
+                validator: Validator.email,
                 controller: _emailController,
               ),
               const Gap(20),
@@ -121,6 +123,7 @@ class _RegisterPageState extends State<RegisterPage> {
               CustomTextField(
                 hintText: "Enter your Phone",
                 label: "Phone",
+                validator: Validator.phone,
                 controller: _phoneController,
                 keyboardType: TextInputType.number,
               ),
@@ -134,8 +137,8 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               const Gap(20),
               CustomTextField(
-                hintText: "Enter what are you allergic to",
-                label: "Allergic to",
+                hintText: "Enter what are you allergic to (Optional)",
+                label: "Allergic to (Optional)",
                 controller: _allergicMedicineController,
                 minLines: 3,
                 maxLines: 6,

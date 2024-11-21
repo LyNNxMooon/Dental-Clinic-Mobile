@@ -32,7 +32,7 @@ class AppointmentController extends BaseController {
         _authController.currentUser.value == null ||
         doctor.value == null) {
       setLoadingState = LoadingState.error;
-      setErrorMessage = "Fill all the fields!";
+      setErrorMessage = "Please select the doctor to make appointment!";
 
       showDialog(
         barrierDismissible: false,

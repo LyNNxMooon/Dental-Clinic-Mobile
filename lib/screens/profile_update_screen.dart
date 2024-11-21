@@ -2,6 +2,7 @@ import 'package:dental_clinic_mobile/constants/colors.dart';
 import 'package:dental_clinic_mobile/constants/images.dart';
 import 'package:dental_clinic_mobile/constants/text.dart';
 import 'package:dental_clinic_mobile/controller/auth_controller.dart';
+import 'package:dental_clinic_mobile/utils/enums.dart';
 import 'package:dental_clinic_mobile/widgets/button_widget.dart';
 import 'package:dental_clinic_mobile/widgets/loading_state_widget.dart';
 import 'package:dental_clinic_mobile/widgets/profile_image_widget.dart';
@@ -98,6 +99,7 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
             CustomTextField(
               hintText: "Enter phone to update",
               label: "Phone",
+              validator: Validator.phone,
               controller: _phoneController,
               keyboardType: TextInputType.number,
             ),
@@ -111,8 +113,8 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
             ),
             const Gap(20),
             CustomTextField(
-              hintText: "Enter allergic to update",
-              label: "Allergic to",
+              hintText: "Enter allergic to update (Optional)",
+              label: "Allergic to (Optional)",
               controller: _allergicMedicineController,
               minLines: 3,
               maxLines: 6,
@@ -134,6 +136,7 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
                           _ageController.text,
                           _authController.currentUser.value?.gender ?? "",
                           _authController.currentUser.value?.isBanned ?? false,
+                          _authController.currentUser.value?.url ?? "",
                           context);
                     },
                   ),
@@ -149,6 +152,7 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
                           _ageController.text,
                           _authController.currentUser.value?.gender ?? "",
                           _authController.currentUser.value?.isBanned ?? false,
+                          _authController.currentUser.value?.url ?? "",
                           context);
                     },
                   )),

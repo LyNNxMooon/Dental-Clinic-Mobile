@@ -91,17 +91,114 @@ class RegisterController extends BaseController {
       String age,
       String gender,
       BuildContext context) async {
-    if (name.isEmpty ||
-        email.isEmpty ||
-        password.isEmpty ||
-        confirmPassword.isEmpty ||
-        age.isEmpty ||
-        gender.isEmpty ||
-        imageFile.value == null ||
-        phone.isEmpty ||
+    if (name.isEmpty &&
+        email.isEmpty &&
+        password.isEmpty &&
+        confirmPassword.isEmpty &&
+        age.isEmpty &&
+        gender.isEmpty &&
+        imageFile.value == null &&
+        phone.isEmpty &&
         address.isEmpty) {
       setLoadingState = LoadingState.error;
-      setErrorMessage = "Fill all the fields!";
+      setErrorMessage = "Please fill all your information above!";
+
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (imageFile.value == null) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please upload your photo!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (name.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter your name!";
+
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (email.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter your email!";
+
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (age.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter your age!";
+
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (phone.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter your phone!";
+
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (address.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter your address!";
+
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (password.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter the password you want to set!";
 
       showDialog(
         barrierDismissible: false,
@@ -116,6 +213,20 @@ class RegisterController extends BaseController {
     } else if (password != confirmPassword) {
       setLoadingState = LoadingState.error;
       setErrorMessage = "Passwords do not match!";
+
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (gender.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please select your gender!";
 
       showDialog(
         barrierDismissible: false,

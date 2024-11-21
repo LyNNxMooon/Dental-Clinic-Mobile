@@ -43,9 +43,39 @@ class FeedbackController extends BaseController {
 
   Future addFeedback(TextEditingController bodyController, int rate,
       BuildContext context) async {
-    if (bodyController.text.isEmpty || rate == 0) {
+    if (bodyController.text == " " && rate == 0) {
       setLoadingState = LoadingState.error;
-      setErrorMessage = "Fill all the fields!";
+      setErrorMessage =
+          "Please write the feedback and select the number of your rate to give feedback!";
+
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (bodyController.text == " ") {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please write the feedback  to give feedback!";
+
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (rate == 0) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage =
+          "Please select the number of your rate to give feedback!";
 
       showDialog(
         barrierDismissible: false,
