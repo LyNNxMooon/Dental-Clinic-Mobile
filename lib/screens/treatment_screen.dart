@@ -26,10 +26,17 @@ class TreatmentScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        const Center(
-          child: Text(
-            "Treatments",
-            style: titleStyle,
+        Obx(
+          () => Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Text(
+                "Treatments",
+                style: titleStyle,
+              ),
+              const Gap(5),
+              Text("(${_treatmentController.date.value})")
+            ],
           ),
         ),
         Obx(() => _authController.currentUser.value == null
@@ -46,21 +53,59 @@ class TreatmentScreen extends StatelessWidget {
     return Column(
       children: [
         const Gap(35),
-        LoadingStateWidget(
-            paddingTop: MediaQuery.of(context).size.height * 0.25,
-            loadingState: _treatmentController.getLoadingState,
-            loadingSuccessWidget: TreatmentList(
-              treatments: _treatmentController.treatmentList,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              "Select Date",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            loadingInitWidget: Padding(
-              padding: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.height * 0.25),
-              child: LoadFailWidget(
-                function: () {
-                  _treatmentController.callTreatments();
-                },
+            GestureDetector(
+              onTap: () =>
+                  _treatmentController.getTreatmentsOnSelectedDate(context),
+              child: Container(
+                width: 35,
+                height: 35,
+                decoration: BoxDecoration(
+                    color: kBtnGrayColor,
+                    borderRadius: BorderRadius.circular(20)),
+                child: const Icon(
+                  Icons.date_range,
+                  color: kFourthColor,
+                ),
               ),
-            )),
+            )
+          ],
+        ),
+        const Gap(20),
+        Obx(
+          () => _treatmentController.filteredTreatmentsByDate.isEmpty
+              ? Padding(
+                  padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.height * 0.25),
+                  child: const Center(
+                    child: Text(
+                      "No treatments on this date!",
+                      style: titleStyle,
+                    ),
+                  ),
+                )
+              : LoadingStateWidget(
+                  paddingTop: MediaQuery.of(context).size.height * 0.25,
+                  loadingState: _treatmentController.getLoadingState,
+                  loadingSuccessWidget: TreatmentList(
+                    treatments: _treatmentController.filteredTreatmentsByDate,
+                  ),
+                  loadingInitWidget: Padding(
+                    padding: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.height * 0.25),
+                    child: LoadFailWidget(
+                      function: () {
+                        _treatmentController.callTreatments();
+                      },
+                    ),
+                  )),
+        )
       ],
     );
   }

@@ -11,10 +11,15 @@ import 'package:dental_clinic_mobile/widgets/success_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class AppointmentController extends BaseController {
   RxList<AppointmentVO> appointmentList = <AppointmentVO>[].obs;
+  RxList<AppointmentVO> filteredAppointmentsByDate = <AppointmentVO>[].obs;
+
   Rxn<DoctorVO> doctor = Rxn<DoctorVO>();
+
+  RxString date = DateFormat('yMMMMd').format(DateTime.now()).obs;
 
   final _authController = Get.put(AuthController());
   final _firebaseService = FirebaseServices();
@@ -23,6 +28,29 @@ class AppointmentController extends BaseController {
   void onInit() {
     callAppointments();
     super.onInit();
+  }
+
+  filterAppointments() {
+    filteredAppointmentsByDate.value = [];
+
+    for (AppointmentVO appointment in appointmentList) {
+      if (appointment.date == date.value) {
+        filteredAppointmentsByDate.add(appointment);
+      }
+    }
+  }
+
+  getAppointmentsOnSelectedDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2101),
+    );
+    if (pickedDate != null) {
+      date.value = DateFormat('yMMMMd').format(pickedDate);
+      filterAppointments();
+    }
   }
 
   Future addAppointment(
@@ -100,6 +128,7 @@ class AppointmentController extends BaseController {
           setLoadingState = LoadingState.error;
         } else {
           appointmentList.value = event;
+          filterAppointments();
           setLoadingState = LoadingState.complete;
         }
       },

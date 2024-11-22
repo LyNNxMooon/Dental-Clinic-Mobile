@@ -15,6 +15,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class TreatmentController extends BaseController {
   Rxn<PaymentVO> selectedPayment = Rxn<PaymentVO>();
@@ -23,13 +24,38 @@ class TreatmentController extends BaseController {
 
   RxList<TreatmentVO> treatmentList = <TreatmentVO>[].obs;
 
-  DateTime todayDate = DateTime.now();
-
   final _firebaseService = FirebaseServices();
 
   String currentUserID = FirebaseAuth.instance.currentUser?.uid ?? "";
 
   final _filePickerUtil = FilePickerUtil();
+
+  RxString date = DateFormat('yMMMMd').format(DateTime.now()).obs;
+
+  RxList<TreatmentVO> filteredTreatmentsByDate = <TreatmentVO>[].obs;
+
+  filterTreatments() {
+    filteredTreatmentsByDate.value = [];
+
+    for (TreatmentVO treatment in treatmentList) {
+      if (treatment.date == date.value) {
+        filteredTreatmentsByDate.add(treatment);
+      }
+    }
+  }
+
+  getTreatmentsOnSelectedDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2101),
+    );
+    if (pickedDate != null) {
+      date.value = DateFormat('yMMMMd').format(pickedDate);
+      filterTreatments();
+    }
+  }
 
   @override
   void onInit() {

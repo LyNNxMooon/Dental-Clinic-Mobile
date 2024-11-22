@@ -22,10 +22,17 @@ class AppointmentScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        const Center(
-          child: Text(
-            "Appointments",
-            style: titleStyle,
+        Obx(
+          () => Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Text(
+                "Appointments",
+                style: titleStyle,
+              ),
+              const Gap(5),
+              Text("(${_appointmentController.date.value})")
+            ],
           ),
         ),
         Obx(() => _authController.currentUser.value == null
@@ -49,38 +56,70 @@ class AppointmentScreen extends StatelessWidget {
               "Add Appointment",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            GestureDetector(
-              onTap: () => Get.to(() => const AddAppointmentScreen()),
-              child: Container(
-                width: 35,
-                height: 35,
-                decoration: BoxDecoration(
-                    color: kBtnGrayColor,
-                    borderRadius: BorderRadius.circular(20)),
-                child: const Icon(
-                  Icons.add,
-                  color: kFourthColor,
+            Row(
+              children: [
+                GestureDetector(
+                  onTap: () => Get.to(() => const AddAppointmentScreen()),
+                  child: Container(
+                    width: 35,
+                    height: 35,
+                    decoration: BoxDecoration(
+                        color: kBtnGrayColor,
+                        borderRadius: BorderRadius.circular(20)),
+                    child: const Icon(
+                      Icons.add,
+                      color: kFourthColor,
+                    ),
+                  ),
                 ),
-              ),
+                const Gap(10),
+                GestureDetector(
+                  onTap: () => _appointmentController
+                      .getAppointmentsOnSelectedDate(context),
+                  child: Container(
+                    width: 35,
+                    height: 35,
+                    decoration: BoxDecoration(
+                        color: kBtnGrayColor,
+                        borderRadius: BorderRadius.circular(20)),
+                    child: const Icon(
+                      Icons.date_range,
+                      color: kFourthColor,
+                    ),
+                  ),
+                ),
+              ],
             )
           ],
         ),
         const Gap(20),
-        LoadingStateWidget(
-            paddingTop: MediaQuery.of(context).size.height * 0.25,
-            loadingState: _appointmentController.getLoadingState,
-            loadingSuccessWidget: AppointmentList(
-              appointments: _appointmentController.appointmentList,
-            ),
-            loadingInitWidget: Padding(
-              padding: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.height * 0.25),
-              child: LoadFailWidget(
-                function: () {
-                  _appointmentController.callAppointments();
-                },
-              ),
-            )),
+        _appointmentController.filteredAppointmentsByDate.isEmpty
+            ? Padding(
+                padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.25),
+                child: const Center(
+                  child: Text(
+                    "No appointments on this date!",
+                    style: titleStyle,
+                  ),
+                ),
+              )
+            : LoadingStateWidget(
+                paddingTop: MediaQuery.of(context).size.height * 0.25,
+                loadingState: _appointmentController.getLoadingState,
+                loadingSuccessWidget: AppointmentList(
+                  appointments:
+                      _appointmentController.filteredAppointmentsByDate,
+                ),
+                loadingInitWidget: Padding(
+                  padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.height * 0.25),
+                  child: LoadFailWidget(
+                    function: () {
+                      _appointmentController.callAppointments();
+                    },
+                  ),
+                )),
       ],
     );
   }
