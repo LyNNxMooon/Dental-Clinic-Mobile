@@ -24,6 +24,13 @@ class OrderScreen extends StatefulWidget {
 class _OrderScreenState extends State<OrderScreen> {
   Map<int, bool> isDropMap = {};
   bool isCompleted = false;
+
+  @override
+  void initState() {
+    _orderController.filterOrders();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -33,36 +40,52 @@ class _OrderScreenState extends State<OrderScreen> {
         child: ListView(
           children: [
             const Gap(25),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                    onPressed: () => Get.back(),
-                    icon: const Icon(Icons.arrow_back_ios)),
-                const Text(
-                  "Order History",
-                  style: titleStyle,
-                ),
-                const Gap(20)
-              ],
+            Obx(
+              () => Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                      onPressed: () => Get.back(),
+                      icon: const Icon(Icons.arrow_back_ios)),
+                  Text(
+                    _orderController.date.value,
+                    style: titleStyle,
+                  ),
+                  IconButton(
+                      onPressed: () =>
+                          _orderController.getOrdersOnSelectedDate(context),
+                      icon: const Icon(Icons.date_range)),
+                ],
+              ),
             ),
             const Gap(30),
             Obx(
-              () => LoadingStateWidget(
-                  loadingState: _orderController.getLoadingState,
-                  loadingSuccessWidget:
-                      orderList(context, _orderController.orderList),
-                  loadingInitWidget: Padding(
-                    padding: EdgeInsets.only(
-                        top: MediaQuery.of(context).size.height * 0.35,
-                        bottom: MediaQuery.of(context).size.height * 0.0),
-                    child: LoadFailWidget(
-                      function: () {
-                        _orderController.callOrders();
-                      },
-                    ),
-                  ),
-                  paddingTop: MediaQuery.of(context).size.height * 0.35),
+              () => _orderController.filteredOrdersByDate.isEmpty
+                  ? Padding(
+                      padding: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height * 0.35),
+                      child: const Center(
+                        child: Text(
+                          "No orders on this date!",
+                          style: titleStyle,
+                        ),
+                      ),
+                    )
+                  : LoadingStateWidget(
+                      loadingState: _orderController.getLoadingState,
+                      loadingSuccessWidget: orderList(
+                          context, _orderController.filteredOrdersByDate),
+                      loadingInitWidget: Padding(
+                        padding: EdgeInsets.only(
+                            top: MediaQuery.of(context).size.height * 0.35,
+                            bottom: MediaQuery.of(context).size.height * 0.0),
+                        child: LoadFailWidget(
+                          function: () {
+                            _orderController.callOrders();
+                          },
+                        ),
+                      ),
+                      paddingTop: MediaQuery.of(context).size.height * 0.35),
             ),
             const Gap(20),
           ],

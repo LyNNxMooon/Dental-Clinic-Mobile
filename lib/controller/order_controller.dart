@@ -11,10 +11,37 @@ import 'package:dental_clinic_mobile/widgets/error_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:oktoast/oktoast.dart';
 
 class OrderController extends BaseController {
   RxList<OrderVO> orderList = <OrderVO>[].obs;
+  RxList<OrderVO> filteredOrdersByDate = <OrderVO>[].obs;
+
+  RxString date = DateFormat('yMMMMd').format(DateTime.now()).obs;
+
+  filterOrders() {
+    filteredOrdersByDate.value = [];
+
+    for (OrderVO order in orderList) {
+      if (order.date == date.value) {
+        filteredOrdersByDate.add(order);
+      }
+    }
+  }
+
+  getOrdersOnSelectedDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2101),
+    );
+    if (pickedDate != null) {
+      date.value = DateFormat('yMMMMd').format(pickedDate);
+      filterOrders();
+    }
+  }
 
   final _firebaseService = FirebaseServices();
 
@@ -33,6 +60,7 @@ class OrderController extends BaseController {
           setLoadingState = LoadingState.error;
         } else {
           orderList.value = event;
+          filterOrders();
           setLoadingState = LoadingState.complete;
         }
       },
