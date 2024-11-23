@@ -138,8 +138,7 @@ class AppointmentList extends StatelessWidget {
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         mainAxisSpacing: 5.0,
-        crossAxisSpacing: 5,
-        mainAxisExtent: 265,
+        mainAxisExtent: 300,
       ),
       itemCount: appointments.length,
       itemBuilder: (context, index) => AppointmentCard(
@@ -189,6 +188,36 @@ class AppointmentCard extends StatelessWidget {
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, color: kFourthColor)),
               ])),
+              const SizedBox(
+                height: 8,
+              ),
+              Text(
+                appointment.status,
+                style: TextStyle(
+                    color: appointment.status == "Pending"
+                        ? kThirdColor
+                        : appointment.status == "Completed"
+                            ? kSuccessColor
+                            : kErrorColor),
+              ),
+              appointment.status == "Cancelled"
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: TextButton(
+                          onPressed: () => showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  content: Text(appointment.rejectReason),
+                                ),
+                              ),
+                          child: const Text(
+                            "View Reason",
+                            style: TextStyle(
+                                color: kSecondaryColor,
+                                fontWeight: FontWeight.bold),
+                          )),
+                    )
+                  : const SizedBox(),
               const SizedBox(
                 height: 15,
               ),

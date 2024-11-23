@@ -124,7 +124,6 @@ class TreatmentList extends StatelessWidget {
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         mainAxisSpacing: 5.0,
-        crossAxisSpacing: 5,
         mainAxisExtent: 265,
       ),
       itemCount: treatments.length,

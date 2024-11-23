@@ -77,6 +77,8 @@ class AppointmentController extends BaseController {
       int id = DateTime.now().millisecondsSinceEpoch;
 
       final appointment = AppointmentVO(
+          rejectReason: "",
+          status: "Pending",
           id: id,
           doctorId: doctor.value!.id,
           doctorName: doctor.value!.name,

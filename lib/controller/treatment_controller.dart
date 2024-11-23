@@ -125,6 +125,7 @@ class TreatmentController extends BaseController {
           setLoadingState = LoadingState.error;
         } else {
           treatmentList.value = event;
+          filterTreatments();
           setLoadingState = LoadingState.complete;
         }
       },
