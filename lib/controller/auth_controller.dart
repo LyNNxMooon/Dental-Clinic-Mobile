@@ -357,6 +357,7 @@ class AuthController extends BaseController {
             ? url
             : await _uploadFileToFirebaseStorage();
         final patient = UserVO(
+            banReason: "",
             id: id,
             name: name,
             isBanned: isBanned,

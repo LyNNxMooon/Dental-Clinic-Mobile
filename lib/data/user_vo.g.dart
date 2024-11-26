@@ -16,6 +16,7 @@ UserVO _$UserVOFromJson(Map<String, dynamic> json) => UserVO(
       url: json['url'] as String,
       age: (json['age'] as num).toInt(),
       gender: json['gender'] as String,
+      banReason: json['ban_reason'] as String,
     );
 
 Map<String, dynamic> _$UserVOToJson(UserVO instance) => <String, dynamic>{
@@ -28,4 +29,5 @@ Map<String, dynamic> _$UserVOToJson(UserVO instance) => <String, dynamic>{
       'url': instance.url,
       'age': instance.age,
       'gender': instance.gender,
+      'ban_reason': instance.banReason,
     };

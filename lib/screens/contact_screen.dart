@@ -59,7 +59,7 @@ class ContactScreen extends StatelessWidget {
                     context: context,
                     builder: (context) => CustomErrorWidget(
                       errorMessage:
-                          "You have been banned by admin. Please contact to us!",
+                          "You have been banned by admin. Please contact to us!\nReason : ${_authController.currentUser.value?.banReason}",
                       function: () => Get.back(),
                     ),
                   );
@@ -73,7 +73,7 @@ class ContactScreen extends StatelessWidget {
                     context: context,
                     builder: (context) => CustomErrorWidget(
                       errorMessage:
-                          "You have been banned by admin. Please contact to us!",
+                          "You have been banned by admin. Please contact to us!\nReason : ${_authController.currentUser.value?.banReason}",
                       function: () => Get.back(),
                     ),
                   );

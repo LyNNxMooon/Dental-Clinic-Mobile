@@ -245,6 +245,7 @@ class RegisterController extends BaseController {
         (value) {
           String id = FirebaseAuth.instance.currentUser?.uid ?? '';
           final patientVo = UserVO(
+              banReason: "",
               id: id,
               name: name,
               isBanned: false,
