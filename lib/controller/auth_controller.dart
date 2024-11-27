@@ -116,6 +116,23 @@ class AuthController extends BaseController {
 
     _firebaseService.getPatient(id).then(
       (value) {
+        if (value != null) {
+          final userVO = UserVO(
+              id: value.id,
+              name: value.name,
+              phone: value.phone,
+              address: value.address,
+              allergicMedicine: value.allergicMedicine,
+              isBanned: value.isBanned,
+              url: value.url,
+              age: value.age,
+              gender: value.gender,
+              banReason: value.banReason,
+              fcmToken: fcmToken.value);
+
+          _firebaseService.savePatient(userVO);
+        }
+
         currentUser.value = value;
 
         print(value?.name);
@@ -179,20 +196,6 @@ class AuthController extends BaseController {
 
           _hiveDAO.saveUserPassword(password);
           setLoadingState = LoadingState.complete;
-          final userVO = UserVO(
-              id: currentUser.value!.id,
-              name: currentUser.value!.name,
-              phone: currentUser.value!.phone,
-              address: currentUser.value!.address,
-              allergicMedicine: currentUser.value!.allergicMedicine,
-              isBanned: currentUser.value!.isBanned,
-              url: currentUser.value!.url,
-              age: currentUser.value!.age,
-              gender: currentUser.value!.gender,
-              banReason: currentUser.value!.banReason,
-              fcmToken: fcmToken.value);
-
-          _firebaseService.savePatient(userVO);
         },
       ).catchError((error) {
         setLoadingState = LoadingState.error;
