@@ -21,6 +21,8 @@ class AuthController extends BaseController {
 
   Rxn<UserVO> currentUser = Rxn<UserVO>();
 
+  RxString fcmToken = ''.obs;
+
   final _hiveDAO = HiveDao();
 
   final Rxn<File> imageFile = Rxn<File>();
@@ -177,6 +179,20 @@ class AuthController extends BaseController {
 
           _hiveDAO.saveUserPassword(password);
           setLoadingState = LoadingState.complete;
+          final userVO = UserVO(
+              id: currentUser.value!.id,
+              name: currentUser.value!.name,
+              phone: currentUser.value!.phone,
+              address: currentUser.value!.address,
+              allergicMedicine: currentUser.value!.allergicMedicine,
+              isBanned: currentUser.value!.isBanned,
+              url: currentUser.value!.url,
+              age: currentUser.value!.age,
+              gender: currentUser.value!.gender,
+              banReason: currentUser.value!.banReason,
+              fcmToken: fcmToken.value);
+
+          _firebaseService.savePatient(userVO);
         },
       ).catchError((error) {
         setLoadingState = LoadingState.error;
@@ -357,6 +373,7 @@ class AuthController extends BaseController {
             ? url
             : await _uploadFileToFirebaseStorage();
         final patient = UserVO(
+            fcmToken: fcmToken.value,
             banReason: "",
             id: id,
             name: name,

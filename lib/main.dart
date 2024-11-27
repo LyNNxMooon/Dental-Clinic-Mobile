@@ -1,6 +1,7 @@
 import 'package:dental_clinic_mobile/firebase_options.dart';
 import 'package:dental_clinic_mobile/persistent/hive_constant.dart';
 import 'package:dental_clinic_mobile/screens/splash_screen.dart';
+import 'package:dental_clinic_mobile/service/fcm_service.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ void main() async {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await Hive.initFlutter();
   await Hive.openBox<String>(kHiveBoxForUserPassword);
+  FcmService().init();
   runApp(const MyApp());
 }
 

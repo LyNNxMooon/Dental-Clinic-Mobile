@@ -245,6 +245,7 @@ class RegisterController extends BaseController {
         (value) {
           String id = FirebaseAuth.instance.currentUser?.uid ?? '';
           final patientVo = UserVO(
+              fcmToken: _authController.fcmToken.value,
               banReason: "",
               id: id,
               name: name,

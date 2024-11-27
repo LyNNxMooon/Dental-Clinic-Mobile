@@ -16,6 +16,8 @@ class UserVO {
   final String gender;
   @JsonKey(name: "ban_reason")
   final String banReason;
+  @JsonKey(name: 'fcm_token')
+  final String fcmToken;
 
   UserVO(
       {required this.id,
@@ -27,7 +29,8 @@ class UserVO {
       required this.url,
       required this.age,
       required this.gender,
-      required this.banReason});
+      required this.banReason,
+      required this.fcmToken});
 
   factory UserVO.fromJson(Map<String, dynamic> json) => _$UserVOFromJson(json);
 
