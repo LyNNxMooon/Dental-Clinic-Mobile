@@ -156,6 +156,18 @@ class _OrderScreenState extends State<OrderScreen> {
                       RichText(
                           text: TextSpan(children: [
                         const TextSpan(
+                            text: "Order ID - ",
+                            style: TextStyle(
+                                color: kSecondaryColor,
+                                fontWeight: FontWeight.bold)),
+                        TextSpan(
+                            text: order.id.toString(),
+                            style: const TextStyle(color: kFourthColor)),
+                      ])),
+                      const Gap(15),
+                      RichText(
+                          text: TextSpan(children: [
+                        const TextSpan(
                             text: "Order Status - ",
                             style: TextStyle(
                                 color: kSecondaryColor,
