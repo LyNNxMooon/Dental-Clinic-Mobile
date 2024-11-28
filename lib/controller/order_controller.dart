@@ -86,10 +86,12 @@ class OrderController extends BaseController {
       String patientAddress,
       num fees,
       String date,
-      String rejectReason) async {
+      String rejectReason,
+      String patientfcm) async {
     setLoadingState = LoadingState.loading;
 
     final orderVo = OrderVO(
+        patientfcm: patientfcm,
         orderRejectReason: rejectReason,
         deliveryFees: fees,
         date: date,

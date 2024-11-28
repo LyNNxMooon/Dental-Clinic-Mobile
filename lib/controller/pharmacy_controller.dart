@@ -210,6 +210,7 @@ class PharmacyController extends BaseController {
       }
 
       final orderVo = OrderVO(
+          patientfcm: _authController.fcmToken.value,
           orderRejectReason: "",
           deliveryFees: 0,
           date: DateFormat('yMMMMd').format(DateTime.now()),

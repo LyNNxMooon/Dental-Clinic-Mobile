@@ -391,7 +391,8 @@ class _OrderScreenState extends State<OrderScreen> {
                                         order.patientAddress,
                                         order.deliveryFees,
                                         order.date,
-                                        order.orderRejectReason);
+                                        order.orderRejectReason,
+                                        order.patientfcm);
                                     setState(() {
                                       isDropMap[index] = !isExpanded;
                                       isCompleted = false;

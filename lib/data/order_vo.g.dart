@@ -22,6 +22,7 @@ OrderVO _$OrderVOFromJson(Map<String, dynamic> json) => OrderVO(
       date: json['date'] as String,
       deliveryFees: json['delivery_fees'] as num,
       orderRejectReason: json['order_reject_reason'] as String,
+      patientfcm: json['patientfcm'] as String,
     );
 
 Map<String, dynamic> _$OrderVOToJson(OrderVO instance) => <String, dynamic>{
@@ -38,4 +39,5 @@ Map<String, dynamic> _$OrderVOToJson(OrderVO instance) => <String, dynamic>{
       'date': instance.date,
       'delivery_fees': instance.deliveryFees,
       'order_reject_reason': instance.orderRejectReason,
+      'patientfcm': instance.patientfcm,
     };

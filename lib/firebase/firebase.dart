@@ -302,7 +302,8 @@ class FirebaseServices {
                       deliveryFees: (orderData['delivery_fees'] is int)
                           ? (orderData['delivery_fees'] as int).toDouble()
                           : orderData['delivery_fees'],
-                      orderRejectReason: orderData['order_reject_reason']);
+                      orderRejectReason: orderData['order_reject_reason'],
+                      patientfcm: orderData['patientfcm']);
 
                   // Filter orders by patientID
                   if (order.patientID == patientUid) {
