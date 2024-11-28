@@ -22,7 +22,6 @@ class FcmService {
 
     //foreground notification
     FirebaseMessaging.onMessage.listen((RemoteMessage event) async {
-      print(event.data);
       await showNotification(event.data);
     });
 
@@ -36,7 +35,6 @@ class FcmService {
   }
 
   static Future<void> onBackgroundNotification(RemoteMessage message) async {
-    print(message.data);
     await showNotification(message.data);
     final prefs = await SharedPreferences.getInstance();
     prefs.setString("notification", message.data['payload']);

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dental_clinic_mobile/constants/colors.dart';
 import 'package:dental_clinic_mobile/constants/text.dart';
 import 'package:dental_clinic_mobile/controller/auth_controller.dart';
@@ -5,6 +6,7 @@ import 'package:dental_clinic_mobile/controller/chat_controller.dart';
 import 'package:dental_clinic_mobile/data/message_vo.dart';
 import 'package:dental_clinic_mobile/widgets/loading_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -95,7 +97,7 @@ class ChatScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.75,
+                  width: MediaQuery.of(context).size.width * 0.64,
                   height: 60,
                   decoration:
                       BoxDecoration(borderRadius: BorderRadius.circular(25)),
@@ -116,6 +118,20 @@ class ChatScreen extends StatelessWidget {
                           )),
                     ),
                   ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 7),
+                  child: IconButton(
+                      onPressed: () {
+                        _chatController.sendPhoto(
+                            _authController.adminUID[0],
+                            _authController.currentUser.value?.name ?? "",
+                            _authController.currentUser.value?.url ?? "");
+                      },
+                      icon: const Icon(
+                        Icons.photo,
+                        size: 30,
+                      )),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 7),
@@ -170,14 +186,43 @@ class MessageItemView extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       alignment: alignment,
       child: Container(
-        padding: const EdgeInsets.all(10),
+        padding: message.message.startsWith('https')
+            ? const EdgeInsets.all(2)
+            : const EdgeInsets.all(10),
         constraints: const BoxConstraints(maxWidth: 220),
         decoration: BoxDecoration(
             color: bubbleColor, borderRadius: BorderRadius.circular(15)),
-        child: Text(
-          message.message,
-          style: const TextStyle(fontSize: 16),
-        ),
+        child: message.message.startsWith('https')
+            ? GestureDetector(
+                onTap: () => showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    content: SizedBox(
+                        width: 200,
+                        height: 350,
+                        child: CachedNetworkImage(
+                          imageUrl: message.message,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) =>
+                              const CupertinoActivityIndicator(),
+                        )),
+                  ),
+                ),
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: CachedNetworkImage(
+                      imageUrl: message.message,
+                      width: 150,
+                      height: 200,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) =>
+                          const CupertinoActivityIndicator(),
+                    )),
+              )
+            : Text(
+                message.message,
+                style: const TextStyle(fontSize: 16),
+              ),
       ),
     );
   }

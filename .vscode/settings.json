@@ -6,6 +6,7 @@
         "Getx",
         "Obsecure",
         "oktoast",
+        "prefs",
         "timelapse"
     ]
 }
