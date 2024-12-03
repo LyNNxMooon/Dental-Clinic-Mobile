@@ -148,7 +148,8 @@ class TreatmentController extends BaseController {
       double discount,
       String time,
       String paymentStatus,
-      BuildContext context) async {
+      BuildContext context,
+      String patientfcm) async {
     if (selectedPayment.value == null || selectFile.value == null) {
       setLoadingState = LoadingState.error;
 
@@ -170,6 +171,7 @@ class TreatmentController extends BaseController {
       url = await _uploadFileToFirebaseStorage();
 
       final treatmentVO = TreatmentVO(
+          patientfcm: patientfcm,
           time: time,
           paymentStatus: paymentStatus,
           paymentType: selectedPayment.value!.type,

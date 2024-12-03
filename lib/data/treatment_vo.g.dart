@@ -21,6 +21,7 @@ TreatmentVO _$TreatmentVOFromJson(Map<String, dynamic> json) => TreatmentVO(
       paymentStatus: json['payment_status'] as String,
       paymentType: json['payment_type'] as String,
       slip: json['slip'] as String,
+      patientfcm: json['patientfcm'] as String,
     );
 
 Map<String, dynamic> _$TreatmentVOToJson(TreatmentVO instance) =>
@@ -39,4 +40,5 @@ Map<String, dynamic> _$TreatmentVOToJson(TreatmentVO instance) =>
       'payment_status': instance.paymentStatus,
       'payment_type': instance.paymentType,
       'slip': instance.slip,
+      'patientfcm': instance.patientfcm,
     };

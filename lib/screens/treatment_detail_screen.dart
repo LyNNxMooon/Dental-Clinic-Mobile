@@ -239,7 +239,8 @@ class _TreatmentDetailScreenState extends State<TreatmentDetailScreen> {
                               widget.treatment.discount,
                               widget.treatment.time,
                               widget.treatment.paymentStatus,
-                              context);
+                              context,
+                              widget.treatment.patientfcm);
                         },
                         style: const ButtonStyle(
                             backgroundColor:
@@ -266,7 +267,8 @@ class _TreatmentDetailScreenState extends State<TreatmentDetailScreen> {
                               widget.treatment.discount,
                               widget.treatment.time,
                               widget.treatment.paymentStatus,
-                              context);
+                              context,
+                              widget.treatment.patientfcm);
                         },
                         style: const ButtonStyle(
                             backgroundColor:

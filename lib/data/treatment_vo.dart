@@ -23,6 +23,7 @@ class TreatmentVO {
   @JsonKey(name: "payment_type")
   final String paymentType;
   final String slip;
+  final String patientfcm;
 
   TreatmentVO(
       {required this.id,
@@ -38,7 +39,8 @@ class TreatmentVO {
       required this.time,
       required this.paymentStatus,
       required this.paymentType,
-      required this.slip});
+      required this.slip,
+      required this.patientfcm});
 
   factory TreatmentVO.fromJson(Map<String, dynamic> json) =>
       _$TreatmentVOFromJson(json);
